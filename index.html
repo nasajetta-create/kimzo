@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>職務考績表 職掌共編</title>
+<style>
+:root{
+  --bg:#eef1f4; --card:#ffffff; --ink:#222; --muted:#777; --line:#aaa;
+  --head:#455a64; --dim:#2c5f8a; --item:#f0f4f8;
+  --r1:#2e7d32; --r2:#1565c0; --r3:#e65100; --r4:#b71c1c;
+  --edit:#fffbe8; --accent:#1565c0; --ok:#2e7d32; --bad:#b02a2a;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;}
+.wrap{max-width:1360px;margin:0 auto;padding:12px 16px 40px;}
+.topbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--card);
+  border:1.5px solid #666;padding:8px 14px;margin-bottom:10px;}
+.topbar .t{font-size:18px;font-weight:bold;}
+.topbar .v{font-size:11px;color:var(--muted);}
+.pill{border:1px solid #999;padding:4px 14px;font-size:13.5px;background:#f5f5f5;cursor:pointer;user-select:none;}
+.pill.on{background:var(--dim);color:#fff;border-color:var(--dim);font-weight:bold;}
+#status{margin-left:auto;font-size:12.5px;color:var(--muted);}
+#status.ok{color:var(--ok);} #status.bad{color:var(--bad);}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:0;}
+.tab{border:1px solid #999;border-bottom:none;padding:6px 14px;font-size:13.5px;background:#e4e7ea;cursor:pointer;user-select:none;}
+.tab.on{background:var(--dim);color:#fff;border-color:var(--dim);font-weight:bold;}
+.tblbox{overflow-x:auto;background:var(--card);border:1.5px solid #666;}
+table{border-collapse:collapse;width:100%;min-width:980px;font-size:13px;}
+th{background:var(--head);color:#fff;padding:6px 8px;border:1px solid #888;font-size:13.5px;font-weight:bold;}
+th.re{background:var(--r1)} th.rg{background:var(--r2)} th.rm{background:var(--r3)} th.rd{background:var(--r4)}
+td{border:1px solid var(--line);padding:0;vertical-align:top;}
+td.dim{background:var(--dim);color:#fff;font-weight:bold;text-align:center;font-size:13px;width:58px;padding:6px 4px;}
+td.item{background:var(--item);font-weight:bold;width:118px;padding:6px 8px;font-size:13px;}
+td.item .rn{cursor:pointer;}
+td.item .rn:hover{color:var(--accent);text-decoration:underline;}
+td.duty{min-width:180px;}
+.cellin{padding:6px 8px 3px;cursor:pointer;min-height:38px;}
+.cellin:hover{outline:2px solid var(--accent);outline-offset:-2px;}
+.cellin ol{margin:0;padding-left:18px;line-height:1.6;}
+.cellin li{margin:1px 0;}
+.cellin .empty{color:#bbb;}
+.cfoot{display:flex;gap:6px;align-items:center;padding:1px 8px 5px;font-size:11px;color:var(--muted);}
+.cfoot .cbtn{margin-left:auto;border:1px solid #bbb;background:#f5f5f5;color:#555;font-size:11px;padding:0 8px;cursor:pointer;}
+.cfoot .cbtn.has{border-color:var(--accent);color:var(--accent);font-weight:bold;}
+.cfoot .pres{color:var(--bad);font-weight:bold;}
+.editbox{padding:6px;background:var(--edit);outline:2px solid #e6a817;outline-offset:-2px;}
+.editbox textarea{width:100%;min-height:110px;font-size:13px;font-family:inherit;border:1px solid #ccc;padding:6px;line-height:1.6;}
+.editbox .hint{font-size:11px;color:var(--muted);margin:2px 0;}
+.ebtns{display:flex;gap:6px;margin-top:3px;}
+.ebtns button{font-size:12.5px;padding:4px 14px;border:1px solid #999;cursor:pointer;background:#fff;}
+.ebtns .save{background:var(--dim);color:#fff;border-color:var(--dim);}
+.addrow{margin:8px 0 0;}
+.addrow button{font-size:12.5px;padding:5px 14px;border:1px solid var(--dim);background:#fff;color:var(--dim);cursor:pointer;}
+.cpanel{display:none;margin-top:12px;background:var(--card);border:1.5px solid var(--accent);padding:10px 14px;}
+.cpanel.show{display:block;}
+.cpanel h3{font-size:14px;margin:0 0 8px;}
+.cone{border-bottom:1px dashed #ccc;padding:4px 0;font-size:12.5px;line-height:1.6;}
+.cone .who{font-weight:bold;color:var(--accent);margin-right:8px;}
+.cone .when{color:var(--muted);font-size:11px;}
+.crow{display:flex;gap:8px;margin-top:8px;}
+.crow input{flex:1;font-size:13px;border:1px solid #ccc;padding:5px 8px;}
+.crow button{font-size:12.5px;padding:4px 14px;border:1px solid var(--dim);background:var(--dim);color:#fff;cursor:pointer;}
+.crow .cls{background:#fff;color:#555;border-color:#999;}
+.logsec{margin-top:12px;background:var(--card);border:1.5px solid #666;padding:8px 14px;font-size:12px;color:var(--muted);}
+.logsec h3{font-size:13px;margin:0 0 4px;color:var(--ink);}
+.logsec div{line-height:1.8;}
+.foot{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.7;}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;background:var(--dim);color:#fff;
+  padding:8px 20px;font-size:13px;display:none;z-index:9;}
+.toast.show{display:block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="topbar">
+  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K0918-01</span>
+  <span class="pill" data-who="艋舺良">艋舺良</span>
+  <span class="pill" data-who="沈協理">沈協理</span>
+  <span id="status">連線中…</span>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div class="tblbox"><table id="tbl"></table></div>
+<div class="addrow" id="addrow"></div>
+
+<div class="cpanel" id="cpanel">
+  <h3 id="ctitle">留言</h3>
+  <div id="clist"></div>
+  <div class="crow">
+    <input id="cinput" placeholder="輸入留言後按送出">
+    <button id="csend">送出</button>
+    <button class="cls" id="cclose">關閉</button>
+  </div>
+</div>
+
+<div class="logsec"><h3>異動紀錄（最近 10 筆）</h3><div id="loglist">尚無異動</div></div>
+
+<div class="foot">
+規則：基礎＝2024版；第一輪＝職掌，不寫評分基準。構面1、2 已預載定案內容，直接點格子可修改；構面3～6 空表，可按「新增內容列」開列。<br>
+點格子編輯、按「註」留言。兩人可同時編不同格；同一格同時編輯時，後儲存者覆蓋先儲存者。
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+"use strict";
+/* ================= KIMZO-WORK 職掌共編 K0918-01 ================= */
+var firebaseConfig = {
+  apiKey: "AIzaSyD8UQE3Y2AyWo3-2KXEN0xJeGswE86bebI",
+  authDomain: "g95-work-management.firebaseapp.com",
+  projectId: "g95-work-management",
+  storageBucket: "g95-work-management.firebasestorage.app",
+  messagingSenderId: "297002949701",
+  appId: "1:297002949701:web:862cb3b6bbdd612f85172c"
+};
+var FB_OK = (typeof firebase !== "undefined");
+var db = null;
+if (FB_OK){
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+}
+var COL = "kaoji";
+
+/* ---------- 固定架構 ---------- */
+var ROLES = [["e","工程師","re"],["g","組長","rg"],["m","主任","rm"],["d","所長","rd"]];
+var DIMS = [
+  {id:"m1", tab:"1 進度管理", name:"構面1 進度管理"},
+  {id:"m2", tab:"2 安全衛生", name:"構面2 安全衛生管理"},
+  {id:"m3", tab:"3 工事與品質", name:"構面3 工事與品質管理"},
+  {id:"m4", tab:"4 預算成本", name:"構面4 預算成本管理"},
+  {id:"m5", tab:"5 領導統御", name:"構面5 領導統御"},
+  {id:"m6", tab:"6 工作行為", name:"構面6 工作行為與態度"}
+];
+var FIXED_ROWS = {
+  m1:[
+    {id:"111", grp:"1-1 工事進度", name:"1 內控進度"},
+    {id:"112", grp:"1-1 工事進度", name:"2 階段進度 里程碑"},
+    {id:"121", grp:"1-2 工務作業進度", name:"1 分包計劃"},
+    {id:"122", grp:"1-2 工務作業進度", name:"2 請購提送"},
+    {id:"123", grp:"1-2 工務作業進度", name:"3 施工圖"},
+    {id:"124", grp:"1-2 工務作業進度", name:"4 採發"},
+    {id:"125", grp:"1-2 工務作業進度", name:"5 單項計畫"}
+  ],
+  m2:[
+    {id:"211", grp:"2-1 安全衛生管理", name:"1 稽核缺失改善"},
+    {id:"212", grp:"2-1 安全衛生管理", name:"2 重大職災防止"},
+    {id:"213", grp:"2-1 安全衛生管理", name:"3 勞檢應對"},
+    {id:"214", grp:"2-1 安全衛生管理", name:"4 職安活動參與"},
+    {id:"215", grp:"2-1 安全衛生管理", name:"5 加分項"}
+  ]
+};
+var SEED = {
+  "m1_111_e":["主辦工項依內控進度執行","落後即回報"],
+  "m1_111_g":["帶班依週進度執行","調度班內人力追趕"],
+  "m1_111_m":["每月進度管控","落後當月提追回對策並執行"],
+  "m1_111_d":["內控進度表訂定，對公司標準工期核備","大進度總責"],
+  "m1_112_e":["無此職掌"],
+  "m1_112_g":["受主任分配，分擔里程碑前置整備項","節點前帶班衝刺"],
+  "m1_112_m":["前置整備總其成","分配加驗收組長分擔項"],
+  "m1_112_d":["里程碑如期達成負責"],
+  "m1_121_e":["列請購單項目時先做項目審查：對照其他章節，確認有無需分包整合的項目","需整合者納入本次請購，再接續請購作業"],
+  "m1_121_g":["同工程師 1~2","覆核漏查，含延伸工項界面"],
+  "m1_121_m":["整合審查確認：併入或不併入判定","確認後放行進請購編製"],
+  "m1_121_d":["核定整合結果","漏項最後把關"],
+  "m1_122_e":["施工位置確認（範圍及高度）加數量計算加預算差異核對","施工規範","業主合約特殊規範（耐震、綠建築、智慧建築）","勞安要求附件","預計進場作業進度時間表","扣款原則說明"],
+  "m1_122_g":["同工程師 1~6","延伸工項確認（例：中庭雜項結構體）"],
+  "m1_122_m":["左列逐項審查：項目與預算相符、延伸工項檢核、附件審查、數量差異說明確認、進度表及扣款原則廠商簽認、特殊規範確認"],
+  "m1_122_d":["核定放行","重點把關：漏項與新增項、廠商簽認、特殊規範"],
+  "m1_123_e":["圖說基本審核及閱讀（空間、尺寸、數量）","註記及提問，走釋疑單"],
+  "m1_123_g":["圖說基本審核及閱讀（空間、尺寸、數量）","註記及提問（釋疑單）"],
+  "m1_123_m":["圖面審核檢討：合理性、工作性、關聯組合性、CP值","價值工程提案"],
+  "m1_123_d":["依總體進度定案圖說階段審查進度表","圖面審核最後確認"],
+  "m1_124_e":["依請購單對廠商發出訪價單","報價單彙整與比較表"],
+  "m1_124_g":["比較表差異分析確認","聯繫廠商進行訪談會議"],
+  "m1_124_m":["資料審查、會議前檢討分析","會議後整理與建議得標廠商"],
+  "m1_124_d":["會議前檢討分析確認","決定得標廠商"],
+  "m1_125_e":["廠商計劃書審核，自辦項目無廠商則自編","確認本案需求加施工規範加相關法令要求","審查 7 天，審查意見以固定表單提交"],
+  "m1_125_g":["同工程師 1~3","彙整工程師審查意見、漏審把關"],
+  "m1_125_m":["審查意見確認","決定送件或退回，審查 3 天"],
+  "m1_125_d":["重點計畫最後確認（假設工程、危險性作業等）","一般計畫由主任決行"],
+  "m2_211_e":["缺失修繕與回報"],
+  "m2_211_g":["缺失修繕回報確認（複查）","追蹤"],
+  "m2_211_m":["勞安巡檢陪同","缺失修繕完成確認","通知廠商及工務所宣導"],
+  "m2_211_d":["重複性及立即性缺失檢討與對策裁決","工務所宣導主持"],
+  "m2_212_e":["工具箱會議","每日巡檢落實","重點工作再檢查"],
+  "m2_212_g":["工具箱會議","明日重點區域宣導","勞安協議組織召開"],
+  "m2_212_m":["工具箱會議","本週重點區域宣導","勞安協議組織召開","執行問題排除"],
+  "m2_212_d":["政令宣導","現場督導及作業落實","執行問題排除"],
+  "m2_213_e":["維持原案，四職務同進退"],
+  "m2_213_g":["維持原案，四職務同進退"],
+  "m2_213_m":["維持原案，四職務同進退"],
+  "m2_213_d":["維持原案，四職務同進退"],
+  "m2_214_e":["活動參加","自主稽查"],
+  "m2_214_g":["活動參加","自主稽查"],
+  "m2_214_m":["勞安月例會","工地巡檢","工務所宣導與教育"],
+  "m2_214_d":["勞安月例會","工地巡檢","工務所宣導與教育"],
+  "m2_215_e":["提出新的勞安構想且獲採用","對外單位獲獎（路跑、競賽等）"],
+  "m2_215_g":["提出新的勞安構想且獲採用","對外單位獲獎（路跑、競賽等）"],
+  "m2_215_m":["提出新的勞安構想且獲採用","對外單位獲獎（路跑、競賽等）"],
+  "m2_215_d":["提出新的勞安構想且獲採用","對外單位獲獎（路跑、競賽等）"]
+};
+
+/* ---------- 狀態 ---------- */
+var cells = {};    // key m1_111_e -> {lines, by, at, ts}
+var rows = {};     // key dimId -> [ {id,name,order} ] 自訂列
+var cmts = [];     // {cell, author, text, at, ts}
+var logs = [];     // {author, action, name, at, ts}
+var pres = {};     // who -> {cell, ts}
+var curDim = "m1";
+var editingCell = null;
+var panelCell = null;
+var connected = false;
+
+function now(){
+  var d = new Date();
+  var p = new Intl.DateTimeFormat("zh-TW",{timeZone:"Asia/Taipei",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(d);
+  return p;
+}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function who(){
+  var el = document.querySelector(".pill.on");
+  return el ? el.getAttribute("data-who") : "";
+}
+function toast(t){
+  var el = document.getElementById("toast");
+  el.textContent = t; el.classList.add("show");
+  setTimeout(function(){ el.classList.remove("show"); }, 2400);
+}
+function setStatus(t, cls){
+  var s = document.getElementById("status");
+  s.textContent = t; s.className = cls || "";
+}
+function cellLines(key){
+  if (cells[key] && cells[key].lines) return cells[key].lines;
+  if (SEED[key]) return SEED[key];
+  return [];
+}
+function allRows(dim){
+  var fixed = FIXED_ROWS[dim] ? FIXED_ROWS[dim].slice() : [];
+  var extra = (rows[dim]||[]).slice().sort(function(a,b){return (a.order||0)-(b.order||0);});
+  return fixed.concat(extra);
+}
+function rowName(dim,rowId){
+  var list = allRows(dim);
+  for (var i=0;i<list.length;i++) if (list[i].id===rowId) return list[i].name;
+  return rowId;
+}
+function cName(key){
+  var p = key.split("_"); // dim,row,role
+  var rn = ""; ROLES.forEach(function(r){ if(r[0]===p[2]) rn=r[1]; });
+  return rowName(p[0],p[1]) + " / " + rn;
+}
+
+/* ---------- 畫面 ---------- */
+function renderTabs(){
+  var h = "";
+  DIMS.forEach(function(d){
+    h += '<div class="tab'+(d.id===curDim?" on":"")+'" data-dim="'+d.id+'">'+esc(d.tab)+'</div>';
+  });
+  document.getElementById("tabs").innerHTML = h;
+}
+function render(){
+  renderTabs();
+  var list = allRows(curDim);
+  var h = '<tr><th style="width:58px">項目</th><th style="width:118px">內容</th>';
+  h += '<th class="re">工程師</th><th class="rg">組長</th><th class="rm">主任</th><th class="rd">所長</th></tr>';
+  if (!list.length){
+    h += '<tr><td colspan="6" style="padding:14px;text-align:center;color:#999">此構面尚無內容列，按下方「新增內容列」開始</td></tr>';
+  }
+  // group rowspan 計算
+  var spans = {};
+  list.forEach(function(r){ var g=r.grp||"自訂"; spans[g]=(spans[g]||0)+1; });
+  var printed = {};
+  list.forEach(function(r){
+    var g = r.grp || "自訂";
+    h += "<tr>";
+    if (!printed[g]){
+      printed[g] = true;
+      var gshow = g.split(" ");
+      h += '<td class="dim" rowspan="'+spans[g]+'">'+esc(gshow[0])+'<br>'+esc(gshow.slice(1).join(""))+'</td>';
+    }
+    var fixed = FIXED_ROWS[curDim] && FIXED_ROWS[curDim].some(function(x){return x.id===r.id;});
+    h += '<td class="item"><span class="rn"'+(fixed?"":' data-rowedit="'+r.id+'"')+'>'+esc(r.name)+'</span></td>';
+    ROLES.forEach(function(role){
+      var key = curDim+"_"+r.id+"_"+role[0];
+      var lines = cellLines(key);
+      var meta = cells[key];
+      var n = cmts.filter(function(c){return c.cell===key;}).length;
+      h += '<td class="duty" data-cell="'+key+'">';
+      if (editingCell===key){
+        h += '<div class="editbox"><textarea id="eta">'+esc(lines.join("\n"))+'</textarea>';
+        h += '<div class="hint">一行一條，儲存後編號自動產生</div>';
+        h += '<div class="ebtns"><button class="save" data-act="save">儲存</button><button data-act="cancel">取消</button></div></div>';
+      } else {
+        h += '<div class="cellin" data-act="edit">';
+        if (!lines.length) h += '<div class="empty">（點此填寫）</div>';
+        else { h += "<ol>"; lines.forEach(function(l){ h += "<li>"+esc(l)+"</li>"; }); h += "</ol>"; }
+        h += '</div><div class="cfoot">';
+        var presTxt = "";
+        Object.keys(pres).forEach(function(w){
+          if (w!==who() && pres[w] && pres[w].cell===key && (Date.now()-pres[w].ts)<90000) presTxt = w+" 編輯中…";
+        });
+        if (presTxt) h += '<span class="pres">'+esc(presTxt)+'</span>';
+        else if (meta && meta.by) h += '<span>'+esc(meta.by)+' '+esc(meta.at||"")+'</span>';
+        h += '<button class="cbtn'+(n?" has":"")+'" data-act="cmt">註'+(n?" "+n:"")+'</button></div>';
+      }
+      h += "</td>";
+    });
+    h += "</tr>";
+  });
+  document.getElementById("tbl").innerHTML = h;
+  document.getElementById("addrow").innerHTML =
+    FIXED_ROWS[curDim] ? "" : '<button data-act="addrow">新增內容列</button>';
+  renderLog(); renderPanel();
+}
+function renderLog(){
+  var el = document.getElementById("loglist");
+  var l = logs.slice().sort(function(a,b){return b.ts-a.ts;}).slice(0,10);
+  el.innerHTML = l.length ? l.map(function(x){
+    return esc(x.at)+"　"+esc(x.author)+"　"+esc(x.action)+"　"+esc(x.name||"");
+  }).join("<br>") : "尚無異動";
+}
+function renderPanel(){
+  var p = document.getElementById("cpanel");
+  if (!panelCell){ p.classList.remove("show"); return; }
+  p.classList.add("show");
+  document.getElementById("ctitle").textContent = "留言　" + cName(panelCell);
+  var list = cmts.filter(function(c){return c.cell===panelCell;}).sort(function(a,b){return a.ts-b.ts;});
+  document.getElementById("clist").innerHTML = list.length ? list.map(function(c){
+    return '<div class="cone"><span class="who">'+esc(c.author)+'</span><span class="when">'+esc(c.at)+'</span><br>'+esc(c.text)+'</div>';
+  }).join("") : '<div class="cone">尚無留言</div>';
+}
+
+/* ---------- Firestore ---------- */
+function fsSet(id, data){
+  if (!db){ toast("目前離線，無法儲存"); return Promise.reject("offline"); }
+  return db.collection(COL).doc(id).set(data).catch(function(e){
+    setStatus("儲存失敗："+(e&&e.code||""), "bad");
+    toast("儲存失敗，請檢查網路後再試");
+    throw e;
+  });
+}
+function addLog(action, name){
+  var t = Date.now();
+  fsSet("log_"+t+"_"+Math.floor(Math.random()*1000),
+    {t:"log", author:who(), action:action, name:name, at:now(), ts:t});
+}
+function setPres(cellKey){
+  var w = who(); if (!w || !db) return;
+  db.collection(COL).doc("pres_"+w).set({t:"pres", who:w, cell:cellKey, ts:Date.now()}).catch(function(){});
+}
+
+if (db) db.collection(COL).onSnapshot(function(snap){
+  cells = {}; rows = {}; cmts = []; logs = []; pres = {};
+  snap.forEach(function(doc){
+    var d = doc.data();
+    if (d.t==="cell") cells[d.dim+"_"+d.row+"_"+d.role] = d;
+    else if (d.t==="row"){ if(!rows[d.dim]) rows[d.dim]=[]; rows[d.dim].push(d); }
+    else if (d.t==="cmt") cmts.push(d);
+    else if (d.t==="log") logs.push(d);
+    else if (d.t==="pres") pres[d.who] = d;
+  });
+  if (!connected){ connected = true; setStatus("已連線，即時同步", "ok"); }
+  render();
+}, function(err){
+  setStatus("連線失敗："+(err&&err.code||""), "bad");
+});
+if (!db) setStatus("離線預覽（無同步）", "bad");
+
+/* ---------- 事件 ---------- */
+document.addEventListener("click", function(ev){
+  var t = ev.target;
+  // 身分
+  if (t.classList && t.classList.contains("pill")){
+    document.querySelectorAll(".pill").forEach(function(p){p.classList.remove("on");});
+    t.classList.add("on");
+    try{ localStorage.setItem("kz_who", t.getAttribute("data-who")); }catch(e){}
+    return;
+  }
+  // 頁籤
+  if (t.classList && t.classList.contains("tab")){
+    curDim = t.getAttribute("data-dim"); editingCell = null; panelCell = null; render(); return;
+  }
+  var act = t.getAttribute && t.getAttribute("data-act");
+  var td = t.closest ? t.closest("td[data-cell]") : null;
+
+  // 自訂列改名
+  var re = t.getAttribute && t.getAttribute("data-rowedit");
+  if (re){
+    if (!who()){ toast("請先選擇上方你的名字"); return; }
+    var cur = rowName(curDim, re);
+    var nv = window.prompt("修改內容名稱", cur);
+    if (nv && nv.trim() && nv.trim()!==cur){
+      fsSet("row_"+curDim+"_"+re, {t:"row", dim:curDim, id:re, name:nv.trim(), order:(Date.now()), by:who()})
+        .then(function(){ addLog("修改列名", nv.trim()); });
+    }
+    return;
+  }
+  if (act==="addrow"){
+    if (!who()){ toast("請先選擇上方你的名字"); return; }
+    var nm = window.prompt("新內容名稱（例：1 自主查驗）");
+    if (nm && nm.trim()){
+      var rid = "r"+Date.now();
+      fsSet("row_"+curDim+"_"+rid, {t:"row", dim:curDim, id:rid, name:nm.trim(), order:Date.now(), by:who()})
+        .then(function(){ addLog("新增內容列", nm.trim()); });
+    }
+    return;
+  }
+  if ((act==="edit") || (t.closest && t.closest(".cellin"))){
+    if (!td) return;
+    if (!who()){ toast("請先選擇上方你的名字"); return; }
+    editingCell = td.getAttribute("data-cell"); panelCell = null;
+    setPres(editingCell);
+    render();
+    var ta = document.getElementById("eta"); if (ta) ta.focus();
+    return;
+  }
+  if (act==="cancel"){ editingCell = null; setPres(null); render(); return; }
+  if (act==="save"){
+    if (!td) return;
+    var key = td.getAttribute("data-cell");
+    var ta = document.getElementById("eta");
+    var lines = ta.value.split("\n").map(function(x){return x.trim();}).filter(function(x){return x;});
+    editingCell = null; setPres(null);
+    if (lines.join("\n") === cellLines(key).join("\n")){ render(); return; }
+    var p = key.split("_");
+    fsSet("cell_"+key, {t:"cell", dim:p[0], row:p[1], role:p[2], lines:lines, by:who(), at:now(), ts:Date.now()})
+      .then(function(){ addLog("修改內容", cName(key)); });
+    render();
+    return;
+  }
+  if (act==="cmt"){
+    if (!td) return;
+    panelCell = td.getAttribute("data-cell"); editingCell = null; render();
+    document.getElementById("cpanel").scrollIntoView({behavior:"smooth", block:"nearest"});
+    return;
+  }
+  if (t.id==="cclose"){ panelCell = null; renderPanel(); return; }
+  if (t.id==="csend"){
+    if (!panelCell) return;
+    if (!who()){ toast("請先選擇上方你的名字"); return; }
+    var ci = document.getElementById("cinput");
+    var txt = ci.value.trim(); if (!txt) return;
+    var ts = Date.now();
+    fsSet("cmt_"+ts+"_"+Math.floor(Math.random()*1000),
+      {t:"cmt", cell:panelCell, author:who(), text:txt, at:now(), ts:ts})
+      .then(function(){ addLog("留言", cName(panelCell)); });
+    ci.value = "";
+    return;
+  }
+});
+document.getElementById("cinput").addEventListener("keydown", function(e){
+  if (e.key==="Enter"){ document.getElementById("csend").click(); }
+});
+
+/* ---------- 啟動 ---------- */
+try{
+  var w = localStorage.getItem("kz_who");
+  if (w){ document.querySelectorAll(".pill").forEach(function(p){ if(p.getAttribute("data-who")===w) p.classList.add("on"); }); }
+}catch(e){}
+render();
+</script>
+</body>
+</html>
