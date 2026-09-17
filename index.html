@@ -23,6 +23,16 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
 .pill.on{background:var(--dim);color:#fff;border-color:var(--dim);font-weight:bold;}
 #status{margin-left:auto;font-size:12.5px;color:var(--muted);}
 #status.ok{color:var(--ok);} #status.bad{color:var(--bad);}
+.g24{border:1.5px solid #888;background:#e9e9e9;margin-bottom:8px;}
+.g24 .hd{background:#666;color:#fff;font-size:13px;font-weight:bold;padding:6px 12px;display:flex;cursor:pointer;user-select:none;}
+.g24 .hd .tg{margin-left:auto;font-weight:normal;font-size:12px;}
+.g24 .bd{padding:8px 10px;overflow-x:auto;}
+.g24 table{background:#f2f2f2;min-width:760px;font-size:12.5px;}
+.g24 th{background:#7a7a7a;}
+.g24 td{padding:5px 8px;color:#444;line-height:1.6;background:#f7f7f7;}
+.g24 td.it{background:#e2e2e2;font-weight:bold;width:150px;}
+.g24 td.wh{width:130px;}
+.g24 ol{margin:0;padding-left:17px;}
 .tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:0;}
 .tab{border:1px solid #999;border-bottom:none;padding:6px 14px;font-size:13.5px;background:#e4e7ea;cursor:pointer;user-select:none;}
 .tab.on{background:var(--dim);color:#fff;border-color:var(--dim);font-weight:bold;}
@@ -76,13 +86,14 @@ td.duty{min-width:180px;}
 <div class="wrap">
 
 <div class="topbar">
-  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K0918-01</span>
+  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K0918-02</span>
   <span class="pill" data-who="艋舺良">艋舺良</span>
   <span class="pill" data-who="沈協理">沈協理</span>
   <span id="status">連線中…</span>
 </div>
 
 <div class="tabs" id="tabs"></div>
+<div id="g24box"></div>
 <div class="tblbox"><table id="tbl"></table></div>
 <div class="addrow" id="addrow"></div>
 
@@ -99,7 +110,7 @@ td.duty{min-width:180px;}
 <div class="logsec"><h3>異動紀錄（最近 10 筆）</h3><div id="loglist">尚無異動</div></div>
 
 <div class="foot">
-規則：基礎＝2024版；第一輪＝職掌，不寫評分基準。構面1、2 已預載定案內容，直接點格子可修改；構面3～6 空表，可按「新增內容列」開列。<br>
+規則：基礎＝2024版；第一輪＝職掌，不寫評分基準。每構面上方灰色區塊＝2024 原始資料（唯讀對照），下方＝更新後對照表。構面1、2 已預載定案內容，直接點格子可修改；構面3～6 空表，可按「新增內容列」開列。<br>
 點格子編輯、按「註」留言。兩人可同時編不同格；同一格同時編輯時，後儲存者覆蓋先儲存者。
 </div>
 
@@ -206,6 +217,48 @@ var SEED = {
   "m2_215_d":["提出新的勞安構想且獲採用","對外單位獲獎（路跑、競賽等）"]
 };
 
+/* ---------- 2024 原始資料（唯讀） ---------- */
+var DATA24 = {
+ m1:{name:"進度管理", items:[
+  {it:"工事進度管理", who:"四職務", b:["採用總體進度評核（業主合約工期，作業所整體一致）","級距：A 超前5%、B 超前3%、C 如期、D 落後3%、E 落後5%、F 落後7%、G 落後10%以上"]},
+  {it:"請購提送及請購內容", who:"四職務", b:["A 提前完成且內容均能符合執行需求，請購數量完成子層詳細表","B 提前完成且內容均能符合執行需求","C 如期（符合主任月進度）及附件完整","D 如期完成，但請購內容未檢附內容附件說明","E 落後且影響實際執行","F 毫無請購作業（扣分）"]}
+ ]},
+ m2:{name:"安全衛生管理（各級職評核標準相同）", items:[
+  {it:"職安課稽核", who:"四職務", b:["依據職安稽查評核排名","級距：A 月評第一、B 第二三、C 第四至六、D 第七八、E 第九十、F 第十一十二、G 第十三以後"]},
+  {it:"重大職災發生", who:"四職務", b:["依就醫紀錄認定","A 0次、B 1次以上"]},
+  {it:"勞檢外罰款", who:"四職務", b:["倒扣分數計","A 0次、B 1次、C 1次以上"]},
+  {it:"職安參與度", who:"四職務", b:["各項參與次數總和：勞安協議組織會議參與（每月）、勞安巡查參與、協助勞安科對外活動、參與勞檢處職安中心觀摩","級距：A 7次至 G 2次以下"]}
+ ]},
+ m3:{name:"工事與品質管理", items:[
+  {it:"圖說執行", who:"四職務，基準分兩套", b:["工程師組長：A 具有視圖能力並能如實依圖管理、B 具有視圖能力但須主任主管協助、C 視圖能力學習中","主任所長：A 不需專案指導且如期完成圖面送審且經專業審核無問題、B 不需專案指導但時程落後（不影響執行）、C 需專業協助圖面審核且如期完成送審、D 需專案協助審核且時程落後（不影響執行）、E 需專案協助審核且時程已影響執行、F 無圖面審核能力"]},
+  {it:"行政評比管理", who:"四職務", b:["A 第一名、B 第二三名、C 第四五名、D 第六七名、E 第八至十名、F 分數低於80分以下（含80分）"]},
+  {it:"採發請購", who:"四職務，基準分兩套", b:["工程師組長（常規符合項數）：1 預算項目與圖說標註對應（平立面圖）、2 圖說內容與預算項目未對應之釐清、3 數量（各階）子呈表與門窗分層數量表、4 預定工期表（作業工期分段計畫內容）、5 施工規範材料規範材料型號、6 補充說明、7 計畫類請購內容圖說（圍籬、安全措施、鷹架、臨時水電、工務所配置、監視系統等）","主任所長：A 提前完成且能達到執行預算成本的作業內容（價值工程）、B 提前完成且內容符合預算內容、C 如期（依六合一進度表預定時程）、D 落後但沒影響實際執行、E 落後且影響實際執行、F 毫無請購作業（嚴重缺失）"]},
+  {it:"工事管理", who:"四職務", b:["1 圖面清楚了解","2 作業基準及佈設完整","3 作業動線安排妥善","4 作業階段期間檢核確實","5 作業階段時期場所整理整頓良好","6 作業程序安排妥善（界面協調整合確實）","7 作業階段期間完成度管制表更新管理確實","8 作業前障礙提前排除妥善","9 作業階段期間缺失改善確實","評級：符合 9 項至 4 項以下"]},
+  {it:"品質查核", who:"四職務", b:["1 所有組立站立吊線均依圖說標示XYZ向為準","2 所有最終完成面均為平整面","3 單元性成品（磁磚、金屬包版、石材等）縫要直且平、縫尺寸相同","4 所有相接表面建材依圖說標示要求","5 鎖固黏貼類底層材料不得膨脹脫層，五金須達抗拉強度及防鏽能力","評級：達到項數"]},
+  {it:"估驗計價", who:"四職務", b:["1 分層數量表（子呈）完整標註計價範圍","2 簽收單核實（簽名、計價數量吻合）","3 發票開立項目數量金額無誤","4 代扣廠商確認無誤（廠商簽認）","5 代扣款次月扣款確實","6 各項材料檢試驗報告"]},
+  {it:"合約變更單", who:"四職務", b:["1 業主變更指示單、會議紀錄、業主追加減詳細表","2 變更後圖說加原圖說加變更範圍標示","3 數量計算表","4 新增材料報價單","5 客變總表加數量差異統計表","6 錯誤範圍原因說明、數量、工數檢討差異表","7 設計變更追加減（新增追加變更單加追減變更單）併提列提出"]}
+ ]},
+ m4:{name:"預算成本管理", items:[
+  {it:"廠商合約項目內如期如質的執行", who:"主任、所長", b:["A 如實結算（無合約變更作業）","B 數量差異，須辦理合約變更作業","C 客變結束後辦理預算合約變更","D 合約項目及承攬條件不符合實際需求，辦理合約變更單"]},
+  {it:"點工的有效管理計劃", who:"主任、所長", b:["責任釐清","A 依點工計畫如實執行，無追加需求","B 依點工計畫執行，但工數不足需辦理追加","C 無點工計畫，工數無法預估及掌握","D 廠商代僱代扣點工發生爭議"]},
+  {it:"材料管制及損耗控管", who:"主任、所長", b:["A 材料規格符合合約（業主加廠商）","B 材料進場符合現場作業進度","C 每月檢討材料使用（庫存量、各層損耗、剩餘需求）","D 廠商施工後剩餘材料即時調移轉用","E 材料堆置及分層數量計畫"]},
+  {it:"垃圾減量及工區整理整頓之維護", who:"主任、所長", b:["營建廢棄物加民生垃圾","A 建立並執行垃圾分類","B 建材包裝廢料處理","C 廢棄物運棄階段使用量追蹤","D 泥作磁磚材料廢棄數量","E 物料堆置管理"]}
+ ]},
+ m5:{name:"領導統御", items:[
+  {it:"業主滿意度調查", who:"主任、所長", b:["A 特優、B 優、C 普通、D 不佳、E 需改善"]},
+  {it:"團體工作氛圍融洽", who:"主任、所長", b:["A 特優、B 優、C 普通、D 不佳、E 需改善"]},
+  {it:"團體合作戰力", who:"主任、所長", b:["A 特優、B 優、C 普通、D 不佳、E 需改善"]},
+  {it:"協商協調及評價", who:"主任、所長", b:["A 特優、B 優、C 普通、D 不佳、E 需改善"]}
+ ]},
+ m6:{name:"個人行為態度", items:[
+  {it:"出勤", who:"四職務", b:["A 未遲到、B 遲到少於6次、C 遲到少於8次、D 遲到大於8次"]},
+  {it:"休假狀況", who:"四職務", b:["以未休假時數計","A 未休假0天、B 少於6天、C 6至12天、D 12天以上"]},
+  {it:"服裝儀容、個人裝備", who:"四職務", b:["A 符合規定、B 經提醒符合規定、C 未符規定總是有理由、D 完全不理"]},
+  {it:"工務所內整理整頓", who:"四職務", b:["A 保持整齊、B 經提醒會整理、C 總是有理由、D 完全不理"]}
+ ]}
+};
+var g24open = false;
+
 /* ---------- 狀態 ---------- */
 var cells = {};    // key m1_111_e -> {lines, by, at, ts}
 var rows = {};     // key dimId -> [ {id,name,order} ] 自訂列
@@ -265,8 +318,27 @@ function renderTabs(){
   });
   document.getElementById("tabs").innerHTML = h;
 }
+function renderG24(){
+  var d = DATA24[curDim];
+  var box = document.getElementById("g24box");
+  if (!d){ box.innerHTML = ""; return; }
+  var h = '<div class="g24"><div class="hd" data-act="g24toggle">2024 原始資料　'+esc(d.name)
+        + '<span class="tg">唯讀　點此'+(g24open?"收合 ▲":"展開 ▼")+'</span></div>';
+  if (g24open){
+    h += '<div class="bd"><table><tr><th style="width:150px">2024 項目</th><th>評核基準原文</th><th style="width:130px">適用職務</th></tr>';
+    d.items.forEach(function(x){
+      h += '<tr><td class="it">'+esc(x.it)+'</td><td><ol>';
+      x.b.forEach(function(l){ h += "<li>"+esc(l)+"</li>"; });
+      h += '</ol></td><td class="wh">'+esc(x.who)+'</td></tr>';
+    });
+    h += "</table></div>";
+  }
+  h += "</div>";
+  box.innerHTML = h;
+}
 function render(){
   renderTabs();
+  renderG24();
   var list = allRows(curDim);
   var h = '<tr><th style="width:58px">項目</th><th style="width:118px">內容</th>';
   h += '<th class="re">工程師</th><th class="rg">組長</th><th class="rm">主任</th><th class="rd">所長</th></tr>';
@@ -388,6 +460,11 @@ document.addEventListener("click", function(ev){
     curDim = t.getAttribute("data-dim"); editingCell = null; panelCell = null; render(); return;
   }
   var act = t.getAttribute && t.getAttribute("data-act");
+  if (!act && t.closest){
+    var hd = t.closest("[data-act='g24toggle']");
+    if (hd) act = "g24toggle";
+  }
+  if (act==="g24toggle"){ g24open = !g24open; renderG24(); return; }
   var td = t.closest ? t.closest("td[data-cell]") : null;
 
   // 自訂列改名
