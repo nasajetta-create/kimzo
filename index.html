@@ -7,7 +7,7 @@
 <style>
 :root{
   --bg:#eef1f4; --card:#ffffff; --ink:#222; --muted:#777; --line:#aaa;
-  --head:#455a64; --dim:#2c5f8a; --item:#f0f4f8;
+  --head:#455a64; --dim:#2c5f8a; --item:#f0f4f8; --meet:#5e4b8a;
   --r1:#2e7d32; --r2:#1565c0; --r3:#e65100; --r4:#b71c1c;
   --edit:#fffbe8; --accent:#1565c0; --ok:#2e7d32; --bad:#b02a2a;
 }
@@ -21,21 +21,53 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
 .topbar .v{font-size:11px;color:var(--muted);}
 .pill{border:1px solid #999;padding:4px 14px;font-size:13.5px;background:#f5f5f5;cursor:pointer;user-select:none;}
 .pill.on{background:var(--dim);color:#fff;border-color:var(--dim);font-weight:bold;}
+.tbtn{border:1px solid #999;padding:4px 12px;font-size:12.5px;background:#fff;color:#555;cursor:pointer;user-select:none;}
 #status{margin-left:auto;font-size:12.5px;color:var(--muted);}
 #status.ok{color:var(--ok);} #status.bad{color:var(--bad);}
+
+/* ---------- 架構總覽 ---------- */
+.ovbar{background:#2c5f8a;color:#fff;font-size:14px;font-weight:bold;padding:7px 14px;
+  display:flex;align-items:center;cursor:pointer;user-select:none;margin-bottom:8px;}
+.ovbar .tg{margin-left:auto;font-weight:normal;font-size:12.5px;}
+.ovbox{background:#fff;border:1.5px solid #666;margin:-8px 0 10px;padding:10px 12px;}
+.ovsw{display:flex;gap:6px;margin-bottom:8px;}
+.ovsw span{border:1px solid #999;padding:3px 16px;font-size:12.5px;background:#f5f5f5;cursor:pointer;user-select:none;}
+.ovsw span.on{background:#2c5f8a;color:#fff;border-color:#2c5f8a;font-weight:bold;}
+.ovsub{font-size:11.5px;color:#666;margin-bottom:8px;line-height:1.7;}
+.band{border-radius:4px;overflow:hidden;margin-bottom:7px;border:1px solid rgba(0,0,0,.15);}
+.band-h{color:#fff;font-size:13px;font-weight:bold;text-align:center;padding:4px 0;position:relative;}
+.band-h .tag{position:absolute;right:8px;top:4px;font-size:10px;font-weight:normal;
+  background:rgba(255,255,255,.25);padding:0 6px;border-radius:3px;}
+.cols{display:flex;flex-wrap:wrap;}
+.col{flex:1 1 150px;padding:6px 10px 7px;border-right:1px solid rgba(0,0,0,.12);}
+.col:last-child{border-right:0;}
+.col h4{font-size:12px;margin:0 0 3px;font-weight:bold;}
+.col .cl{font-size:11.5px;line-height:1.75;}
+.c1 .band-h{background:#1b7a5a}.c1 .cols{background:#e9f5ef}.c1 h4,.c1 .cl{color:#155c44}
+.c2 .band-h{background:#b02a2a}.c2 .cols{background:#fdeeee}.c2 h4,.c2 .cl{color:#8c1f1f}
+.c3 .band-h{background:#1c5fa8}.c3 .cols{background:#e9f1fa}.c3 h4,.c3 .cl{color:#164a83}
+.c4 .band-h{background:#8a5a00}.c4 .cols{background:#faf1de}.c4 h4,.c4 .cl{color:#6d4700}
+.c5 .band-h{background:#4b44b8}.c5 .cols{background:#eeedfa}.c5 h4,.c5 .cl{color:#3a3494}
+.c6 .band-h{background:#b03355}.c6 .cols{background:#fdeef3}.c6 h4,.c6 .cl{color:#8c2743}
+
+/* ---------- 2024 原始資料 ---------- */
 .g24{border:1.5px solid #888;background:#e9e9e9;margin-bottom:8px;}
 .g24 .hd{background:#666;color:#fff;font-size:13px;font-weight:bold;padding:6px 12px;display:flex;cursor:pointer;user-select:none;}
 .g24 .hd .tg{margin-left:auto;font-weight:normal;font-size:12px;}
-.g24 .bd{padding:8px 10px;overflow-x:auto;}
-.g24 table{background:#f2f2f2;min-width:760px;font-size:12.5px;}
-.g24 th{background:#7a7a7a;}
-.g24 td{padding:5px 8px;color:#444;line-height:1.6;background:#f7f7f7;}
-.g24 td.it{background:#e2e2e2;font-weight:bold;width:150px;}
-.g24 td.wh{width:130px;}
-.g24 ol{margin:0;padding-left:17px;}
+.g24 .bd{padding:8px 12px;background:#f2f2f2;}
+.g24 .bd .l24{font-size:12.5px;color:#444;line-height:1.85;padding:2px 0;border-bottom:1px dashed #d0d0d0;}
+.g24 .bd .l24:last-child{border-bottom:none;}
+.g24 .bd .l24 b{color:#222;}
+.g24 .bd .l24 .wh{color:#777;font-size:11.5px;}
+
+/* ---------- 頁籤與表格 ---------- */
 .tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:0;}
 .tab{border:1px solid #999;border-bottom:none;padding:6px 14px;font-size:13.5px;background:#e4e7ea;cursor:pointer;user-select:none;}
 .tab.on{background:var(--dim);color:#fff;border-color:var(--dim);font-weight:bold;}
+.tab .cnt{font-size:11.5px;color:#666;margin-left:4px;}
+.tab.on .cnt{color:#dbe7f2;}
+.tab.mt{background:#efe9f6;}
+.tab.mt.on{background:var(--meet);border-color:var(--meet);color:#fff;}
 .tblbox{overflow-x:auto;background:var(--card);border:1.5px solid #666;}
 table{border-collapse:collapse;width:100%;min-width:980px;font-size:13px;}
 th{background:var(--head);color:#fff;padding:6px 8px;border:1px solid #888;font-size:13.5px;font-weight:bold;}
@@ -46,23 +78,50 @@ td.item{background:var(--item);font-weight:bold;width:118px;padding:6px 8px;font
 td.item .rn{cursor:pointer;}
 td.item .rn:hover{color:var(--accent);text-decoration:underline;}
 td.duty{min-width:180px;}
+.grpm{display:none;}
+.rlab{display:none;}
+.dot{display:inline-block;width:8px;height:8px;margin-right:5px;vertical-align:middle;}
+.dot.d1{background:#2e7d32;}
+.dot.d2{background:#e08000;}
+.dot.d3{background:#bbb;}
 .cellin{padding:6px 8px 3px;cursor:pointer;min-height:38px;}
 .cellin:hover{outline:2px solid var(--accent);outline-offset:-2px;}
+.cellin.lockd{cursor:default;background:#fafafa;}
+.cellin.lockd:hover{outline:none;}
 .cellin ol{margin:0;padding-left:18px;line-height:1.6;}
 .cellin li{margin:1px 0;}
 .cellin .empty{color:#bbb;}
-.cfoot{display:flex;gap:6px;align-items:center;padding:1px 8px 5px;font-size:11px;color:var(--muted);}
+.cfoot{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:1px 8px 5px;font-size:11px;color:var(--muted);}
 .cfoot .cbtn{margin-left:auto;border:1px solid #bbb;background:#f5f5f5;color:#555;font-size:11px;padding:0 8px;cursor:pointer;}
 .cfoot .cbtn.has{border-color:var(--accent);color:var(--accent);font-weight:bold;}
+.cfoot .unlk{border:1px solid #bbb;background:#f5f5f5;color:#555;font-size:11px;padding:0 8px;cursor:pointer;}
 .cfoot .pres{color:var(--bad);font-weight:bold;}
+.cfoot .lk{background:#dcdcdc;color:#555;border:1px solid #bbb;font-size:10.5px;padding:0 5px;}
+.cfoot .meta{cursor:pointer;text-decoration:underline dotted;}
+.cfoot .meta:hover{color:var(--accent);}
 .editbox{padding:6px;background:var(--edit);outline:2px solid #e6a817;outline-offset:-2px;}
 .editbox textarea{width:100%;min-height:110px;font-size:13px;font-family:inherit;border:1px solid #ccc;padding:6px;line-height:1.6;}
 .editbox .hint{font-size:11px;color:var(--muted);margin:2px 0;}
-.ebtns{display:flex;gap:6px;margin-top:3px;}
-.ebtns button{font-size:12.5px;padding:4px 14px;border:1px solid #999;cursor:pointer;background:#fff;}
+.ebtns{display:flex;gap:6px;margin-top:3px;flex-wrap:wrap;}
+.ebtns button{font-size:12.5px;padding:4px 12px;border:1px solid #999;cursor:pointer;background:#fff;}
 .ebtns .save{background:var(--dim);color:#fff;border-color:var(--dim);}
+.ebtns .lock{background:var(--ok);color:#fff;border-color:var(--ok);}
 .addrow{margin:8px 0 0;}
 .addrow button{font-size:12.5px;padding:5px 14px;border:1px solid var(--dim);background:#fff;color:var(--dim);cursor:pointer;}
+
+/* ---------- 會議紀錄 ---------- */
+.mtop{margin:8px 0 10px;}
+.mtop button{font-size:12.5px;padding:5px 14px;border:1px solid var(--meet);background:#fff;color:var(--meet);cursor:pointer;}
+.mcard{background:var(--card);border:1.5px solid #666;margin-bottom:10px;}
+.mcard .mh{background:var(--meet);color:#fff;padding:6px 14px;font-size:13.5px;font-weight:bold;display:flex;gap:12px;flex-wrap:wrap;}
+.mcard .mb{padding:8px 16px 4px;}
+.mcard .mb ol{margin:0;padding-left:20px;line-height:1.8;font-size:13px;}
+.mcard .mb li{margin:2px 0;}
+.mcard .mf{display:flex;gap:8px;align-items:center;padding:2px 14px 8px;font-size:11.5px;color:var(--muted);}
+.mcard .mf .cbtn{margin-left:auto;border:1px solid #bbb;background:#f5f5f5;color:#555;font-size:11px;padding:1px 10px;cursor:pointer;}
+.mcard .mf .cbtn.has{border-color:var(--accent);color:var(--accent);font-weight:bold;}
+
+/* ---------- 留言 / 紀錄 / 備份 ---------- */
 .cpanel{display:none;margin-top:12px;background:var(--card);border:1.5px solid var(--accent);padding:10px 14px;}
 .cpanel.show{display:block;}
 .cpanel h3{font-size:14px;margin:0 0 8px;}
@@ -76,25 +135,98 @@ td.duty{min-width:180px;}
 .logsec{margin-top:12px;background:var(--card);border:1.5px solid #666;padding:8px 14px;font-size:12px;color:var(--muted);}
 .logsec h3{font-size:13px;margin:0 0 4px;color:var(--ink);}
 .logsec div{line-height:1.8;}
+.bksec{margin-top:10px;background:var(--card);border:1.5px solid #666;padding:8px 14px;font-size:12px;color:var(--muted);}
+.bksec h3{font-size:13px;margin:0 0 6px;color:var(--ink);}
+.bksec .bkrow{display:flex;gap:8px;align-items:center;line-height:2;}
+.bksec button{font-size:11.5px;padding:2px 10px;border:1px solid #999;background:#f5f5f5;color:#444;cursor:pointer;}
+.bksec .exp{border-color:var(--dim);color:var(--dim);background:#fff;font-size:12.5px;padding:4px 14px;}
+.bksec .bkhead{margin:6px 0 2px;}
 .foot{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.7;}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;background:var(--dim);color:#fff;
-  padding:8px 20px;font-size:13px;display:none;z-index:9;}
+  padding:8px 20px;font-size:13px;display:none;z-index:99;}
 .toast.show{display:block;}
+
+/* ---------- 覆蓋層 ---------- */
+.ovl{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);display:none;
+  z-index:30;justify-content:center;align-items:flex-start;padding:26px 12px;overflow:auto;}
+.ovl.show{display:flex;}
+.ovl .box{background:#fff;border:1.5px solid #444;width:100%;max-width:640px;padding:12px 16px 14px;}
+.ovl h3{font-size:14.5px;margin:0 0 8px;}
+.ovl label{display:block;font-size:12px;color:#555;margin:6px 0 2px;}
+.ovl input,.ovl textarea{width:100%;font-size:13px;font-family:inherit;border:1px solid #ccc;padding:5px 8px;}
+.ovl textarea{min-height:140px;line-height:1.7;}
+.ovl .obtns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.ovl .obtns button{font-size:12.5px;padding:5px 16px;border:1px solid #999;background:#fff;cursor:pointer;}
+.ovl .obtns .pri{background:var(--dim);color:#fff;border-color:var(--dim);}
+.vbox{border:1px solid #ccc;padding:6px 10px;margin-bottom:8px;background:#fafafa;}
+.vbox .vh{font-size:12px;color:#555;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.vbox .vh .cur{background:var(--dim);color:#fff;font-size:10.5px;padding:0 6px;}
+.vbox .vh button{margin-left:auto;font-size:11.5px;padding:1px 10px;border:1px solid #999;background:#fff;cursor:pointer;}
+.vbox ol{margin:4px 0 2px;padding-left:20px;font-size:12.5px;line-height:1.65;}
+
+/* ---------- 手機卡片檢視 ---------- */
+@media (max-width:700px){
+  .wrap{padding:10px 10px 30px;}
+  .tblbox{overflow-x:visible;background:transparent;border:none;}
+  #tbl{min-width:0;width:100%;display:block;font-size:13px;}
+  #tbl thead,#tbl tbody{display:block;}
+  #tbl tr{display:block;background:var(--card);border:1.5px solid #666;margin-bottom:10px;}
+  #tbl tr.hdr{display:none;}
+  #tbl tr.nod{border:none;}
+  #tbl td{display:block;border:none;border-bottom:1px solid #ddd;width:auto;min-width:0;}
+  #tbl td.dim{display:none;}
+  #tbl td.item{width:auto;font-size:14px;padding:7px 10px;}
+  #tbl td.duty:last-child{border-bottom:none;}
+  .grpm{display:block;font-weight:normal;font-size:11px;color:#667;margin-bottom:2px;}
+  .rlab{display:block;font-size:12px;font-weight:bold;padding:5px 10px 0;}
+  .rlab.le{color:var(--r1);} .rlab.lg{color:var(--r2);}
+  .rlab.lm{color:var(--r3);} .rlab.ld{color:var(--r4);}
+  .cellin{padding:3px 10px 3px;}
+  .cfoot{padding:1px 10px 6px;}
+  .ovbox{padding:8px;}
+  .col{flex:1 1 100%;border-right:0;border-bottom:1px solid rgba(0,0,0,.12);}
+  .col:last-child{border-bottom:0;}
+}
+
+/* ---------- 列印 ---------- */
+@page{size:A3 landscape;margin:10mm;}
+@media print{
+  html,body{background:#fff;}
+  .wrap{max-width:none;padding:0;}
+  .topbar .pill,.topbar .tbtn,#status,.tabs,.ovbar,.ovbox,#g24box,
+  .cpanel,.logsec,.bksec,.addrow,.foot,.toast,.ovl,.mtop{display:none !important;}
+  .topbar{border:none;padding:0 0 6px;margin-bottom:6px;}
+  .tblbox{border:1px solid #000;overflow:visible;}
+  table{min-width:0;width:100%;font-size:11px;}
+  th{font-size:11.5px;padding:4px 5px;}
+  .cellin{padding:4px 6px 2px;min-height:0;}
+  .cellin:hover{outline:none !important;}
+  .cellin ol{padding-left:15px;line-height:1.45;}
+  .cfoot .cbtn,.cfoot .unlk,.cfoot .pres{display:none !important;}
+  .cfoot{padding:0 6px 3px;font-size:9.5px;}
+  tr{page-break-inside:avoid;}
+  .mcard{border:1px solid #000;page-break-inside:avoid;}
+  .mcard .mf .cbtn{display:none !important;}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <div class="topbar">
-  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K0918-02</span>
+  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K0918-03</span>
   <span class="pill" data-who="艋舺良">艋舺良</span>
   <span class="pill" data-who="沈協理">沈協理</span>
+  <span class="tbtn" data-act="print">列印</span>
   <span id="status">連線中…</span>
 </div>
 
+<div id="ovwrap"></div>
+
 <div class="tabs" id="tabs"></div>
 <div id="g24box"></div>
-<div class="tblbox"><table id="tbl"></table></div>
+<div class="tblbox" id="tblbox"><table id="tbl"></table></div>
+<div id="meetbox"></div>
 <div class="addrow" id="addrow"></div>
 
 <div class="cpanel" id="cpanel">
@@ -109,19 +241,23 @@ td.duty{min-width:180px;}
 
 <div class="logsec"><h3>異動紀錄（最近 10 筆）</h3><div id="loglist">尚無異動</div></div>
 
+<div class="bksec" id="bksec"></div>
+
 <div class="foot">
-規則：基礎＝2024版；第一輪＝職掌，不寫評分基準。每構面上方灰色區塊＝2024 原始資料（唯讀對照），下方＝更新後對照表。構面1、2 已預載定案內容，直接點格子可修改；構面3～6 空表，可按「新增內容列」開列。<br>
-點格子編輯、按「註」留言。兩人可同時編不同格；同一格同時編輯時，後儲存者覆蓋先儲存者。
+規則：基礎＝2024版；第一輪＝職掌，不寫評分基準。每構面上方灰色區塊＝2024 原始資料的項目與內容（唯讀對照），下方＝更新後對照表。構面1、2 已預載並預設定案，需先解鎖才能修改；構面3～6 已預載項目列，格子點開即可填寫。<br>
+點格子編輯、按「註」留言；點格底的修改者時間可看該格的歷史版本。每日自動保存一次快照，可於下方備份區還原或匯出。
 </div>
 
 </div>
 <div class="toast" id="toast"></div>
+<div class="ovl" id="ovl"><div class="box" id="ovlbox"></div></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-/* ================= KIMZO-WORK 職掌共編 K0918-01 ================= */
+/* ================= KIMZO-WORK 職掌共編 K0918-03 ================= */
+var CODE_VERSION = "K0918-03";
 var firebaseConfig = {
   apiKey: "AIzaSyD8UQE3Y2AyWo3-2KXEN0xJeGswE86bebI",
   authDomain: "g95-work-management.firebaseapp.com",
@@ -164,6 +300,48 @@ var FIXED_ROWS = {
     {id:"213", grp:"2-1 安全衛生管理", name:"3 勞檢應對"},
     {id:"214", grp:"2-1 安全衛生管理", name:"4 職安活動參與"},
     {id:"215", grp:"2-1 安全衛生管理", name:"5 加分項"}
+  ],
+  m3:[
+    {id:"311", grp:"3-1 工事管理", name:"1 作業基準佈設"},
+    {id:"312", grp:"3-1 工事管理", name:"2 作業程序與界面"},
+    {id:"313", grp:"3-1 工事管理", name:"3 場域整理整頓"},
+    {id:"314", grp:"3-1 工事管理", name:"4 障礙預排"},
+    {id:"321", grp:"3-2 工事品質管理", name:"1 自主查驗"},
+    {id:"322", grp:"3-2 工事品質管理", name:"2 施工品質把關"},
+    {id:"323", grp:"3-2 工事品質管理", name:"3 缺失改善複驗"},
+    {id:"324", grp:"3-2 工事品質管理", name:"4 業主查核"},
+    {id:"331", grp:"3-3 工務作業品質", name:"1 請購內容品質"},
+    {id:"332", grp:"3-3 工務作業品質", name:"2 日報與紀錄"},
+    {id:"333", grp:"3-3 工務作業品質", name:"3 會議與紀錄"},
+    {id:"334", grp:"3-3 工務作業品質", name:"4 行政評比"}
+  ],
+  m4:[
+    {id:"411", grp:"4-1 合約管理", name:"1 合約結算"},
+    {id:"412", grp:"4-1 合約管理", name:"2 變更單K項"},
+    {id:"413", grp:"4-1 合約管理", name:"3 變更單J項"},
+    {id:"414", grp:"4-1 合約管理", name:"4 估驗計價"},
+    {id:"421", grp:"4-2 點工移工管理", name:"1 點工計畫"},
+    {id:"422", grp:"4-2 點工移工管理", name:"2 派工執行"},
+    {id:"423", grp:"4-2 點工移工管理", name:"3 代雇代扣"},
+    {id:"431", grp:"4-3 材料使用管理", name:"1 材料進場"},
+    {id:"432", grp:"4-3 材料使用管理", name:"2 損耗控管"},
+    {id:"433", grp:"4-3 材料使用管理", name:"3 剩料調轉"}
+  ],
+  m5:[
+    {id:"511", grp:"5-1 向上管理協調", name:"1 問題反映"},
+    {id:"512", grp:"5-1 向上管理協調", name:"2 平行協調"},
+    {id:"513", grp:"5-1 向上管理協調", name:"3 業主關係"},
+    {id:"521", grp:"5-2 訓練培育", name:"1 教育訓練"},
+    {id:"522", grp:"5-2 訓練培育", name:"2 所級訓練"},
+    {id:"523", grp:"5-2 訓練培育", name:"3 接班培養"}
+  ],
+  m6:[
+    {id:"611", grp:"6-1 個人工作態度", name:"1 出勤狀況"},
+    {id:"612", grp:"6-1 個人工作態度", name:"2 服裝儀容"},
+    {id:"613", grp:"6-1 個人工作態度", name:"3 個人裝備"},
+    {id:"614", grp:"6-1 個人工作態度", name:"4 工務所整理整頓"},
+    {id:"615", grp:"6-1 個人工作態度", name:"5 專業證照"},
+    {id:"616", grp:"6-1 個人工作態度", name:"6 公司活動參與度"}
   ]
 };
 var SEED = {
@@ -217,8 +395,8 @@ var SEED = {
   "m2_215_d":["提出新的勞安構想且獲採用","對外單位獲獎（路跑、競賽等）"]
 };
 
-/* ---------- 2024 原始資料（唯讀） ---------- */
-var DATA24 = {
+/* ---------- 2024 原始資料：評分基準全文（保留，第二輪評分用，不渲染） ---------- */
+var DATA24_FULL = {
  m1:{name:"進度管理", items:[
   {it:"工事進度管理", who:"四職務", b:["採用總體進度評核（業主合約工期，作業所整體一致）","級距：A 超前5%、B 超前3%、C 如期、D 落後3%、E 落後5%、F 落後7%、G 落後10%以上"]},
   {it:"請購提送及請購內容", who:"四職務", b:["A 提前完成且內容均能符合執行需求，請購數量完成子層詳細表","B 提前完成且內容均能符合執行需求","C 如期（符合主任月進度）及附件完整","D 如期完成，但請購內容未檢附內容附件說明","E 落後且影響實際執行","F 毫無請購作業（扣分）"]}
@@ -257,23 +435,178 @@ var DATA24 = {
   {it:"工務所內整理整頓", who:"四職務", b:["A 保持整齊、B 經提醒會整理、C 總是有理由、D 完全不理"]}
  ]}
 };
-var g24open = false;
+
+/* ---------- 2024 原始資料：項目與內容（灰色區塊實際顯示） ---------- */
+var DATA24_ITEMS = {
+ m1:{name:"進度管理", list:[
+  ["工事進度管理","總體進度評核，對業主合約工期、作業所整體一致","四職務"],
+  ["請購提送及請購內容","請購提送時程與請購內容完整度（附件、子層詳細表）","四職務"]
+ ]},
+ m2:{name:"安全衛生管理（各級職評核標準相同）", list:[
+  ["職安課稽核","職安稽查月評比排名","四職務"],
+  ["重大職災發生","依就醫紀錄認定","四職務"],
+  ["勞檢外罰款","倒扣分數計","四職務"],
+  ["職安參與度","協議組織會議、巡查、對外活動、觀摩之參與次數","四職務"]
+ ]},
+ m3:{name:"工事與品質管理", list:[
+  ["圖說執行","視圖與圖面審核能力","四職務"],
+  ["行政評比管理","行政評比名次","四職務"],
+  ["採發請購","請購內容常規七項","四職務"],
+  ["工事管理","現場管理九條","四職務"],
+  ["品質查核","成品查核五條","四職務"],
+  ["估驗計價","計價作業六條","四職務"],
+  ["合約變更單","變更文件七條","四職務"]
+ ]},
+ m4:{name:"預算成本管理", list:[
+  ["廠商合約如期如質執行","結算與合約變更狀態","主任、所長"],
+  ["點工的有效管理計劃","點工計畫執行與責任釐清","主任、所長"],
+  ["材料管制及損耗控管","規格、進場、損耗、剩料、堆置五條","主任、所長"],
+  ["垃圾減量及整理整頓","分類、廢料、運棄、廢棄數量、堆置五條","主任、所長"]
+ ]},
+ m5:{name:"領導統御", list:[
+  ["業主滿意度調查","特優至需改善五級","主任、所長"],
+  ["團體工作氛圍融洽","特優至需改善五級","主任、所長"],
+  ["團體合作戰力","特優至需改善五級","主任、所長"],
+  ["協商協調及評價","特優至需改善五級","主任、所長"]
+ ]},
+ m6:{name:"個人行為態度", list:[
+  ["出勤","遲到次數","四職務"],
+  ["休假狀況","未休假時數","四職務"],
+  ["服裝儀容、個人裝備","符合規定程度","四職務"],
+  ["工務所內整理整頓","保持整齊程度","四職務"]
+ ]}
+};
+
+/* ---------- 六構面架構總覽（唯讀） ---------- */
+var FW_NEW = {
+  sub:"基礎＝2024版　｜　構面1、2 待會議檢討；構面3～6 檢討中　｜　●＝2024 版沒有的項目",
+  bands:[
+    {c:"c1", h:"1 進度管理", tag:"待會議檢討", cols:[
+      ["1-1 工事進度管理", ["1 內控進度","2 階段進度／里程碑 ●"]],
+      ["1-2 工務作業進度", ["1 分包計劃 ●","2 請購提送","3 施工圖","4 採發","5 單項計畫 ●"]]
+    ]},
+    {c:"c2", h:"2 安全衛生管理", tag:"待會議檢討", cols:[
+      ["2-1 安全衛生管理", ["1 稽核缺失改善　2 重大職災防止　3 勞檢應對　4 職安活動參與　5 加分項 ●"]]
+    ]},
+    {c:"c3", h:"3 工事與品質管理", tag:"檢討中", cols:[
+      ["3-1 工事管理", ["1 作業基準佈設","2 作業程序與界面","3 場域整理整頓","4 障礙預排"]],
+      ["3-2 工事品質管理", ["1 自主查驗 ●","2 施工品質把關","3 缺失改善複驗 ●","4 業主查核 ●"]],
+      ["3-3 工務作業品質", ["1 請購內容品質","2 日報與紀錄 ●","3 會議與紀錄 ●","4 行政評比"]]
+    ]},
+    {c:"c4", h:"4 預算成本管理", tag:"檢討中", cols:[
+      ["4-1 合約管理", ["1 合約結算","2 變更單K項 ●","3 變更單J項 ●","4 估驗計價"]],
+      ["4-2 點工移工管理", ["1 點工計畫","2 派工執行 ●","3 代雇代扣"]],
+      ["4-3 材料使用管理", ["1 材料進場","2 損耗控管","3 剩料調轉"]]
+    ]},
+    {c:"c5", h:"5 領導統御", tag:"檢討中", cols:[
+      ["5-1 向上管理協調", ["1 問題反映 ●","2 平行協調","3 業主關係"]],
+      ["5-2 訓練培育", ["1 教育訓練 ●","2 所級訓練 ●","3 接班培養 ●"]]
+    ]},
+    {c:"c6", h:"6 工作行為與態度", tag:"待檢討", cols:[
+      ["6-1 個人工作態度", ["1 出勤狀況　2 服裝儀容　3 個人裝備　4 工務所整理整頓　5 專業證照 ●　6 公司活動參與度 ●"]]
+    ]}
+  ],
+  foot:"與 8/26 版差異：1-2 新增分包計劃並依流程重排；構面2 改為缺失改善等五項（含新增加分項）；構面6 維持原內容待檢討。"
+};
+var FW_24 = {
+  sub:"2024 年度評核表原文整理　｜　工程師、組長表僅有構面 1、2、3、6",
+  bands:[
+    {c:"c1", h:"1 進度管理", tag:"", cols:[
+      ["工事進度管理", ["1 總體進度評核","2 對業主合約工期，作業所整體一致"]],
+      ["請購提送及請購內容", ["1 請購提送時程","2 請購內容完整度（附件、子層詳細表）"]]
+    ]},
+    {c:"c2", h:"2 安全衛生管理", tag:"各級職評核標準相同", cols:[
+      ["職安課稽核", ["1 職安稽查月評比排名"]],
+      ["重大職災發生", ["1 依就醫紀錄認定"]],
+      ["勞檢外罰款", ["1 倒扣分數計"]],
+      ["職安參與度", ["1 協議組織會議、巡查、對外活動、觀摩之參與次數"]]
+    ]},
+    {c:"c3", h:"3 工事與品質管理", tag:"", cols:[
+      ["圖說執行", ["1 視圖與圖面審核能力"]],
+      ["行政評比管理", ["1 行政評比名次"]],
+      ["採發請購", ["1 請購內容常規七項"]],
+      ["工事管理", ["1 現場管理九條"]],
+      ["品質查核", ["1 成品查核五條"]],
+      ["估驗計價", ["1 計價作業六條"]],
+      ["合約變更單", ["1 變更文件七條"]]
+    ]},
+    {c:"c4", h:"4 預算成本管理", tag:"主任、所長", cols:[
+      ["廠商合約如期如質執行", ["1 結算與合約變更狀態"]],
+      ["點工的有效管理計劃", ["1 點工計畫執行與責任釐清"]],
+      ["材料管制及損耗控管", ["1 規格、進場、損耗、剩料、堆置五條"]],
+      ["垃圾減量及整理整頓", ["1 分類、廢料、運棄、廢棄數量、堆置五條"]]
+    ]},
+    {c:"c5", h:"5 領導統御", tag:"主任、所長", cols:[
+      ["業主滿意度調查", ["1 特優至需改善五級"]],
+      ["團體工作氛圍融洽", ["1 特優至需改善五級"]],
+      ["團體合作戰力", ["1 特優至需改善五級"]],
+      ["協商協調及評價", ["1 特優至需改善五級"]]
+    ]},
+    {c:"c6", h:"6 個人行為態度", tag:"", cols:[
+      ["出勤", ["1 遲到次數"]],
+      ["休假狀況", ["1 未休假時數"]],
+      ["服裝儀容、個人裝備", ["1 符合規定程度"]],
+      ["工務所內整理整頓", ["1 保持整齊程度"]]
+    ]}
+  ],
+  foot:"註：工程師、組長評核表僅有構面 1、2、3、6；構面 4、5 僅適用主任與所長。"
+};
+
+/* ---------- 內建會議紀錄（程式常數，非資料庫） ---------- */
+var MEET_FIX = [
+  {id:"f0827", date:"115-08-27", title:"老闆第一次會議", src:"逐字稿重點分析 0827",
+   lines:[
+    "先列各階職掌，由 PO 群組彙整，下次會議再談評分",
+    "層層打考核：專案對所長、所長對主任、主任對工程師與組長",
+    "考核等於平常的教育訓練，每兩三週給一次認定",
+    "大進度是所長責任，主任工程師看當月有沒有追回",
+    "內控進度依樓高與樓地板面積訂標準工期",
+    "請購獨立成大項，且進度與內容品質分開；發包新增分包計劃；合約變更單分 K 項與 J 項；錯誤成本歸回原項目"
+   ]},
+  {id:"f0916", date:"115-09-16", title:"老闆第二次會議", src:"逐字稿重點分析 0916",
+   lines:[
+    "架構改四區塊：工事進度、工事品質、工務進度、工務品質",
+    "分包計劃移出評核，改成本管理追蹤，責任歸所長",
+    "請購內容加三項：進場時間表、該項工程預計進度、業主合約事宜（示疑單，先問營業部）",
+    "單項計畫改名單項工程，下分計劃書、施工圖、材料送審",
+    "施工圖與採發的進度責任只在主任與所長",
+    "下次會議主題為工事品質：把關與查驗分開、每層設誤差值"
+   ]}
+];
 
 /* ---------- 狀態 ---------- */
-var cells = {};    // key m1_111_e -> {lines, by, at, ts}
+var cells = {};    // key m1_111_e -> {lines, by, at, ts, locked, hist}
 var rows = {};     // key dimId -> [ {id,name,order} ] 自訂列
 var cmts = [];     // {cell, author, text, at, ts}
 var logs = [];     // {author, action, name, at, ts}
 var pres = {};     // who -> {cell, ts}
+var meets = {};    // docId -> {t:"meet", id, date, title, lines, by, at, ts}
+var snaps = {};    // date(YYYYMMDD) -> {t:"snap", date, ts, data}
 var curDim = "m1";
 var editingCell = null;
 var panelCell = null;
 var connected = false;
+var g24open = false;
+var ovOpen = false;
+var ovMode = "new";
+var snapDone = false;
 
 function now(){
   var d = new Date();
-  var p = new Intl.DateTimeFormat("zh-TW",{timeZone:"Asia/Taipei",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(d);
-  return p;
+  return new Intl.DateTimeFormat("zh-TW",{timeZone:"Asia/Taipei",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(d);
+}
+function tpParts(){
+  var f = new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",
+    day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false,hourCycle:"h23"}).formatToParts(new Date());
+  var g = {};
+  f.forEach(function(p){ g[p.type] = p.value; });
+  return g;
+}
+function tpDay(){ var g = tpParts(); return g.year + g.month + g.day; }
+function tpStamp(){ var g = tpParts(); return g.year+g.month+g.day+"_"+g.hour+g.minute; }
+function dayLabel(ds){
+  if (!ds || ds.length!==8) return ds||"";
+  return ds.slice(0,4)+"-"+ds.slice(4,6)+"-"+ds.slice(6,8);
 }
 function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 function who(){
@@ -294,6 +627,33 @@ function cellLines(key){
   if (SEED[key]) return SEED[key];
   return [];
 }
+function cellLocked(key){
+  var d = cells[key];
+  if (d) return !!d.locked;
+  var dim = key.split("_")[0];
+  return (dim==="m1" || dim==="m2");
+}
+function cellEmpty(key){
+  if (cells[key]) return false;
+  if (SEED[key]) return false;
+  return true;
+}
+function rowState(dim, rowId){
+  var allEmpty = true, allLock = true;
+  ROLES.forEach(function(r){
+    var k = dim+"_"+rowId+"_"+r[0];
+    if (!cellEmpty(k)) allEmpty = false;
+    if (!cellLocked(k)) allLock = false;
+  });
+  if (allEmpty) return "todo";
+  if (allLock) return "done";
+  return "wip";
+}
+function dimCount(dim){
+  var list = allRows(dim), d = 0;
+  list.forEach(function(r){ if (rowState(dim, r.id)==="done") d++; });
+  return {done:d, total:list.length};
+}
 function allRows(dim){
   var fixed = FIXED_ROWS[dim] ? FIXED_ROWS[dim].slice() : [];
   var extra = (rows[dim]||[]).slice().sort(function(a,b){return (a.order||0)-(b.order||0);});
@@ -304,53 +664,166 @@ function rowName(dim,rowId){
   for (var i=0;i<list.length;i++) if (list[i].id===rowId) return list[i].name;
   return rowId;
 }
+function allMeets(){
+  var out = MEET_FIX.map(function(m){
+    return {id:m.id, date:m.date, title:m.title, lines:m.lines, src:m.src, fix:true};
+  });
+  Object.keys(meets).forEach(function(k){
+    var m = meets[k];
+    out.push({id:m.id||k.replace(/^meet_/,""), date:m.date||"", title:m.title||"", lines:m.lines||[],
+      src:(m.by? "由 "+m.by+" 新增 "+(m.at||"") : ""), fix:false, docId:k});
+  });
+  out.sort(function(a,b){ return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0); });
+  return out;
+}
+function findMeet(id){
+  var l = allMeets();
+  for (var i=0;i<l.length;i++) if (l[i].id===id) return l[i];
+  return null;
+}
 function cName(key){
+  if (key.indexOf("meet_")===0){
+    var m = findMeet(key.slice(5));
+    return "會議紀錄 " + (m ? (m.date+" "+m.title) : key.slice(5));
+  }
   var p = key.split("_"); // dim,row,role
   var rn = ""; ROLES.forEach(function(r){ if(r[0]===p[2]) rn=r[1]; });
   return rowName(p[0],p[1]) + " / " + rn;
+}
+
+/* ---------- 架構總覽 ---------- */
+function fwHtml(fw){
+  var h = '<div class="ovsub">'+esc(fw.sub)+'</div>';
+  fw.bands.forEach(function(b){
+    h += '<div class="band '+b.c+'"><div class="band-h">'+esc(b.h)
+       + (b.tag ? '<span class="tag">'+esc(b.tag)+'</span>' : '') + '</div><div class="cols">';
+    b.cols.forEach(function(c){
+      h += '<div class="col"><h4>'+esc(c[0])+'</h4><div class="cl">';
+      h += c[1].map(function(x){ return esc(x); }).join("<br>");
+      h += '</div></div>';
+    });
+    h += '</div></div>';
+  });
+  if (fw.foot) h += '<div class="ovsub" style="margin:2px 0 0">'+esc(fw.foot)+'</div>';
+  return h;
+}
+function renderOv(){
+  var h = '<div class="ovbar" data-act="ovtoggle">六構面架構總覽'
+        + '<span class="tg">唯讀　點此'+(ovOpen?"收合":"展開")+'</span></div>';
+  if (ovOpen){
+    h += '<div class="ovbox"><div class="ovsw">'
+       + '<span class="'+(ovMode==="new"?"on":"")+'" data-act="ovnew">更新版</span>'
+       + '<span class="'+(ovMode==="old"?"on":"")+'" data-act="ovold">2024 原稿</span></div>';
+    h += fwHtml(ovMode==="new" ? FW_NEW : FW_24);
+    h += '</div>';
+  }
+  document.getElementById("ovwrap").innerHTML = h;
 }
 
 /* ---------- 畫面 ---------- */
 function renderTabs(){
   var h = "";
   DIMS.forEach(function(d){
-    h += '<div class="tab'+(d.id===curDim?" on":"")+'" data-dim="'+d.id+'">'+esc(d.tab)+'</div>';
+    var c = dimCount(d.id);
+    h += '<div class="tab'+(d.id===curDim?" on":"")+'" data-dim="'+d.id+'">'+esc(d.tab)
+       + '<span class="cnt">'+c.done+'/'+c.total+'</span></div>';
   });
+  h += '<div class="tab mt'+(curDim==="meet"?" on":"")+'" data-dim="meet">會議紀錄</div>';
   document.getElementById("tabs").innerHTML = h;
 }
 function renderG24(){
-  var d = DATA24[curDim];
+  var d = DATA24_ITEMS[curDim];
   var box = document.getElementById("g24box");
-  if (!d){ box.innerHTML = ""; return; }
+  if (!d || curDim==="meet"){ box.innerHTML = ""; return; }
   var h = '<div class="g24"><div class="hd" data-act="g24toggle">2024 原始資料　'+esc(d.name)
-        + '<span class="tg">唯讀　點此'+(g24open?"收合 ▲":"展開 ▼")+'</span></div>';
+        + '<span class="tg">項目與內容　唯讀　點此'+(g24open?"收合":"展開")+'</span></div>';
   if (g24open){
-    h += '<div class="bd"><table><tr><th style="width:150px">2024 項目</th><th>評核基準原文</th><th style="width:130px">適用職務</th></tr>';
-    d.items.forEach(function(x){
-      h += '<tr><td class="it">'+esc(x.it)+'</td><td><ol>';
-      x.b.forEach(function(l){ h += "<li>"+esc(l)+"</li>"; });
-      h += '</ol></td><td class="wh">'+esc(x.who)+'</td></tr>';
+    h += '<div class="bd">';
+    d.list.forEach(function(x){
+      h += '<div class="l24"><b>'+esc(x[0])+'</b>：'+esc(x[1])
+         + '　<span class="wh">（'+esc(x[2])+'）</span></div>';
     });
-    h += "</table></div>";
+    h += '</div>';
   }
   h += "</div>";
   box.innerHTML = h;
 }
+function cellHtml(key){
+  var lines = cellLines(key);
+  var meta = cells[key];
+  var lock = cellLocked(key);
+  var n = cmts.filter(function(c){return c.cell===key;}).length;
+  var h = "";
+  if (editingCell===key){
+    h += '<div class="editbox"><textarea id="eta">'+esc(lines.join("\n"))+'</textarea>';
+    h += '<div class="hint">一行一條，儲存後編號自動產生</div>';
+    h += '<div class="ebtns"><button class="save" data-act="save">儲存</button>'
+       + '<button class="lock" data-act="savelock">儲存並定案</button>'
+       + '<button data-act="cancel">取消</button></div></div>';
+    return h;
+  }
+  h += '<div class="cellin'+(lock?" lockd":"")+'" data-act="edit">';
+  if (!lines.length) h += '<div class="empty">（點此填寫）</div>';
+  else { h += "<ol>"; lines.forEach(function(l){ h += "<li>"+esc(l)+"</li>"; }); h += "</ol>"; }
+  h += '</div><div class="cfoot">';
+  if (lock) h += '<span class="lk">定案</span>';
+  var presTxt = "";
+  Object.keys(pres).forEach(function(w){
+    if (w!==who() && pres[w] && pres[w].cell===key && (Date.now()-pres[w].ts)<90000) presTxt = w+" 編輯中…";
+  });
+  if (presTxt) h += '<span class="pres">'+esc(presTxt)+'</span>';
+  else if (meta && meta.by) h += '<span class="meta" data-act="hist">'+esc(meta.by)+' '+esc(meta.at||"")+'</span>';
+  if (lock) h += '<button class="unlk" data-act="unlock">解鎖</button>';
+  h += '<button class="cbtn'+(n?" has":"")+'" data-act="cmt">註'+(n?" "+n:"")+'</button></div>';
+  return h;
+}
+function renderMeets(){
+  var box = document.getElementById("meetbox");
+  if (curDim!=="meet"){ box.innerHTML = ""; return; }
+  var h = '<div class="mtop"><button data-act="addmeet">新增會議紀錄</button></div>';
+  var list = allMeets();
+  if (!list.length) h += '<div class="mcard"><div class="mb">尚無會議紀錄</div></div>';
+  list.forEach(function(m){
+    var key = "meet_"+m.id;
+    var n = cmts.filter(function(c){return c.cell===key;}).length;
+    h += '<div class="mcard" data-cell="'+esc(key)+'">';
+    h += '<div class="mh"><span>'+esc(m.date)+'</span><span>'+esc(m.title)+'</span></div>';
+    h += '<div class="mb"><ol>';
+    (m.lines||[]).forEach(function(l){ h += "<li>"+esc(l)+"</li>"; });
+    h += '</ol></div>';
+    h += '<div class="mf"><span>來源：'+esc(m.src||"手動新增")+'</span>';
+    h += '<button class="cbtn'+(n?" has":"")+'" data-act="cmt">註'+(n?" "+n:"")+'</button></div>';
+    h += '</div>';
+  });
+  box.innerHTML = h;
+}
 function render(){
+  renderOv();
   renderTabs();
   renderG24();
+  renderMeets();
+  var tblbox = document.getElementById("tblbox");
+  if (curDim==="meet"){
+    tblbox.style.display = "none";
+    document.getElementById("tbl").innerHTML = "";
+    document.getElementById("addrow").innerHTML = "";
+    renderLog(); renderBk(); renderPanel();
+    return;
+  }
+  tblbox.style.display = "";
   var list = allRows(curDim);
-  var h = '<tr><th style="width:58px">項目</th><th style="width:118px">內容</th>';
+  var h = '<tr class="hdr"><th style="width:58px">項目</th><th style="width:118px">內容</th>';
   h += '<th class="re">工程師</th><th class="rg">組長</th><th class="rm">主任</th><th class="rd">所長</th></tr>';
   if (!list.length){
-    h += '<tr><td colspan="6" style="padding:14px;text-align:center;color:#999">此構面尚無內容列，按下方「新增內容列」開始</td></tr>';
+    h += '<tr class="nod"><td colspan="6" style="padding:14px;text-align:center;color:#999">此構面尚無內容列，按下方「新增內容列」開始</td></tr>';
   }
-  // group rowspan 計算
   var spans = {};
   list.forEach(function(r){ var g=r.grp||"自訂"; spans[g]=(spans[g]||0)+1; });
   var printed = {};
   list.forEach(function(r){
     var g = r.grp || "自訂";
+    var st = rowState(curDim, r.id);
+    var dcls = st==="done" ? "d1" : (st==="wip" ? "d2" : "d3");
     h += "<tr>";
     if (!printed[g]){
       printed[g] = true;
@@ -358,38 +831,21 @@ function render(){
       h += '<td class="dim" rowspan="'+spans[g]+'">'+esc(gshow[0])+'<br>'+esc(gshow.slice(1).join(""))+'</td>';
     }
     var fixed = FIXED_ROWS[curDim] && FIXED_ROWS[curDim].some(function(x){return x.id===r.id;});
-    h += '<td class="item"><span class="rn"'+(fixed?"":' data-rowedit="'+r.id+'"')+'>'+esc(r.name)+'</span></td>';
+    h += '<td class="item"><span class="grpm">'+esc(g)+'</span>'
+       + '<span class="dot '+dcls+'"></span>'
+       + '<span class="rn"'+(fixed?"":' data-rowedit="'+r.id+'"')+'>'+esc(r.name)+'</span></td>';
     ROLES.forEach(function(role){
       var key = curDim+"_"+r.id+"_"+role[0];
-      var lines = cellLines(key);
-      var meta = cells[key];
-      var n = cmts.filter(function(c){return c.cell===key;}).length;
       h += '<td class="duty" data-cell="'+key+'">';
-      if (editingCell===key){
-        h += '<div class="editbox"><textarea id="eta">'+esc(lines.join("\n"))+'</textarea>';
-        h += '<div class="hint">一行一條，儲存後編號自動產生</div>';
-        h += '<div class="ebtns"><button class="save" data-act="save">儲存</button><button data-act="cancel">取消</button></div></div>';
-      } else {
-        h += '<div class="cellin" data-act="edit">';
-        if (!lines.length) h += '<div class="empty">（點此填寫）</div>';
-        else { h += "<ol>"; lines.forEach(function(l){ h += "<li>"+esc(l)+"</li>"; }); h += "</ol>"; }
-        h += '</div><div class="cfoot">';
-        var presTxt = "";
-        Object.keys(pres).forEach(function(w){
-          if (w!==who() && pres[w] && pres[w].cell===key && (Date.now()-pres[w].ts)<90000) presTxt = w+" 編輯中…";
-        });
-        if (presTxt) h += '<span class="pres">'+esc(presTxt)+'</span>';
-        else if (meta && meta.by) h += '<span>'+esc(meta.by)+' '+esc(meta.at||"")+'</span>';
-        h += '<button class="cbtn'+(n?" has":"")+'" data-act="cmt">註'+(n?" "+n:"")+'</button></div>';
-      }
+      h += '<span class="rlab l'+role[0]+'">'+esc(role[1])+'</span>';
+      h += cellHtml(key);
       h += "</td>";
     });
     h += "</tr>";
   });
   document.getElementById("tbl").innerHTML = h;
-  document.getElementById("addrow").innerHTML =
-    FIXED_ROWS[curDim] ? "" : '<button data-act="addrow">新增內容列</button>';
-  renderLog(); renderPanel();
+  document.getElementById("addrow").innerHTML = '<button data-act="addrow">新增內容列</button>';
+  renderLog(); renderBk(); renderPanel();
 }
 function renderLog(){
   var el = document.getElementById("loglist");
@@ -397,6 +853,19 @@ function renderLog(){
   el.innerHTML = l.length ? l.map(function(x){
     return esc(x.at)+"　"+esc(x.author)+"　"+esc(x.action)+"　"+esc(x.name||"");
   }).join("<br>") : "尚無異動";
+}
+function renderBk(){
+  var el = document.getElementById("bksec");
+  var ks = Object.keys(snaps).sort().reverse();
+  var h = '<h3>資料備份</h3>';
+  h += '<div><button class="exp" data-act="export">匯出備份</button></div>';
+  h += '<div class="bkhead">每日自動快照（保留 14 天）</div>';
+  if (!ks.length) h += '<div>尚無快照，連線後當日會自動建立一份</div>';
+  else ks.forEach(function(d){
+    h += '<div class="bkrow"><span>'+esc(dayLabel(d))+'</span>'
+       + '<button data-act="restore" data-day="'+esc(d)+'">還原</button></div>';
+  });
+  el.innerHTML = h;
 }
 function renderPanel(){
   var p = document.getElementById("cpanel");
@@ -407,6 +876,46 @@ function renderPanel(){
   document.getElementById("clist").innerHTML = list.length ? list.map(function(c){
     return '<div class="cone"><span class="who">'+esc(c.author)+'</span><span class="when">'+esc(c.at)+'</span><br>'+esc(c.text)+'</div>';
   }).join("") : '<div class="cone">尚無留言</div>';
+}
+
+/* ---------- 覆蓋層 ---------- */
+function ovlOpen(html){
+  document.getElementById("ovlbox").innerHTML = html;
+  document.getElementById("ovl").classList.add("show");
+}
+function ovlClose(){
+  document.getElementById("ovl").classList.remove("show");
+  document.getElementById("ovlbox").innerHTML = "";
+}
+function openHist(key){
+  var c = cells[key];
+  var vers = [{lines:cellLines(key), by:(c&&c.by)||"預載", at:(c&&c.at)||"", cur:true}];
+  ((c&&c.hist)||[]).forEach(function(hh,i){
+    vers.push({lines:hh.lines||[], by:hh.by||"", at:hh.at||"", idx:i});
+  });
+  var h = '<h3>版本紀錄　'+esc(cName(key))+'</h3>';
+  vers.forEach(function(v){
+    h += '<div class="vbox"><div class="vh">';
+    h += v.cur ? '<span class="cur">目前版</span>' : '<span>舊版</span>';
+    h += '<span>'+esc(v.by)+'</span><span>'+esc(v.at)+'</span>';
+    if (!v.cur) h += '<button data-act="revert" data-key="'+esc(key)+'" data-i="'+v.idx+'">還原此版</button>';
+    h += '</div><ol>';
+    if (!v.lines.length) h += '<li>（空白）</li>';
+    else v.lines.forEach(function(l){ h += "<li>"+esc(l)+"</li>"; });
+    h += '</ol></div>';
+  });
+  if (vers.length===1) h += '<div class="ovsub">此格尚無舊版紀錄。</div>';
+  h += '<div class="obtns"><button data-act="ovlclose">關閉</button></div>';
+  ovlOpen(h);
+}
+function openMeetForm(){
+  var h = '<h3>新增會議紀錄</h3>';
+  h += '<label>日期（例 115-09-16）</label><input id="mfd" value="">';
+  h += '<label>會議名稱</label><input id="mft" value="">';
+  h += '<label>重點內容（一行一條）</label><textarea id="mfl"></textarea>';
+  h += '<div class="obtns"><button class="pri" data-act="meetsave">儲存</button>'
+     + '<button data-act="ovlclose">取消</button></div>';
+  ovlOpen(h);
 }
 
 /* ---------- Firestore ---------- */
@@ -421,15 +930,105 @@ function fsSet(id, data){
 function addLog(action, name){
   var t = Date.now();
   fsSet("log_"+t+"_"+Math.floor(Math.random()*1000),
-    {t:"log", author:who(), action:action, name:name, at:now(), ts:t});
+    {t:"log", author:who(), action:action, name:name, at:now(), ts:t}).catch(function(){});
 }
 function setPres(cellKey){
   var w = who(); if (!w || !db) return;
   db.collection(COL).doc("pres_"+w).set({t:"pres", who:w, cell:cellKey, ts:Date.now()}).catch(function(){});
 }
+function saveCell(key, lines, lock, actName){
+  var p = key.split("_");
+  var old = cells[key];
+  var hist = [];
+  if (old){
+    hist = [{lines:(old.lines||[]), by:(old.by||""), at:(old.at||"")}].concat(old.hist||[]).slice(0,3);
+  } else if (SEED[key]){
+    hist = [{lines:SEED[key], by:"預載", at:""}];
+  }
+  var lockV = (lock===true) ? true : (old ? !!old.locked : false);
+  return fsSet("cell_"+key, {t:"cell", dim:p[0], row:p[1], role:p[2], lines:lines,
+      by:who(), at:now(), ts:Date.now(), locked:lockV, hist:hist})
+    .then(function(){ addLog(actName || (lock===true ? "修改並定案" : "修改內容"), cName(key)); });
+}
+function unlockCell(key){
+  var p = key.split("_");
+  var old = cells[key];
+  var d;
+  if (old){
+    d = {t:"cell", dim:old.dim||p[0], row:old.row||p[1], role:old.role||p[2],
+         lines:(old.lines||[]), by:(old.by||who()), at:(old.at||now()), ts:(old.ts||Date.now()),
+         locked:false, hist:(old.hist||[])};
+  } else {
+    d = {t:"cell", dim:p[0], row:p[1], role:p[2], lines:(SEED[key]||[]),
+         by:who(), at:now(), ts:Date.now(), locked:false, hist:[]};
+  }
+  fsSet("cell_"+key, d).then(function(){ addLog("解除定案", cName(key)); }).catch(function(){});
+}
+
+/* ---------- 每日自動快照 ---------- */
+function doSnap(){
+  if (snapDone || !db) return;
+  snapDone = true;
+  var ds = tpDay();
+  if (snaps[ds]){ cleanSnaps(); return; }
+  var payload;
+  try{ payload = JSON.stringify({cells:cells, rows:rows, meets:meets}); }
+  catch(e){ return; }
+  try{
+    db.collection(COL).doc("snap_"+ds).set({t:"snap", date:ds, ts:Date.now(), data:payload})
+      .then(function(){ cleanSnaps(); })
+      .catch(function(){});
+  }catch(e2){ /* 快照失敗不影響主功能 */ }
+}
+function cleanSnaps(){
+  if (!db) return;
+  var lim = Date.now() - 14*86400000;
+  Object.keys(snaps).forEach(function(d){
+    var s = snaps[d];
+    if (s && s.t==="snap" && s.ts && s.ts < lim){
+      try{ db.collection(COL).doc("snap_"+d).delete().catch(function(){}); }catch(e){}
+    }
+  });
+}
+function restoreSnap(ds){
+  var s = snaps[ds];
+  if (!s){ toast("找不到該快照"); return; }
+  if (!who()){ toast("請先選擇上方你的名字"); return; }
+  if (!window.confirm("警告：還原 "+dayLabel(ds)+" 的快照，會用該日內容覆蓋現在的職掌格子、自訂列與新增會議紀錄，現有較新的內容將被蓋掉且無法復原。確定要還原嗎？")) return;
+  var o;
+  try{ o = JSON.parse(s.data||"{}"); }
+  catch(e){ toast("快照資料損毀，無法還原"); return; }
+  var n = 0;
+  Object.keys(o.cells||{}).forEach(function(k){
+    fsSet("cell_"+k, o.cells[k]).catch(function(){}); n++;
+  });
+  Object.keys(o.rows||{}).forEach(function(dim){
+    (o.rows[dim]||[]).forEach(function(r){ fsSet("row_"+dim+"_"+r.id, r).catch(function(){}); n++; });
+  });
+  Object.keys(o.meets||{}).forEach(function(mid){
+    fsSet(mid, o.meets[mid]).catch(function(){}); n++;
+  });
+  addLog("還原備份", dayLabel(ds));
+  toast("已送出還原 "+n+" 筆");
+}
+function expBackup(){
+  var o = {ver:CODE_VERSION, at:now(), cells:cells, rows:rows, cmts:cmts, logs:logs, meets:meets};
+  var txt;
+  try{ txt = JSON.stringify(o, null, 1); }
+  catch(e){ toast("匯出失敗"); return; }
+  try{
+    var blob = new Blob([txt], {type:"application/json"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = "kimzo備份_"+tpStamp()+".json";
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); if (a.parentNode) a.parentNode.removeChild(a); }, 800);
+    toast("已匯出備份檔");
+  }catch(e2){ toast("匯出失敗"); }
+}
 
 if (db) db.collection(COL).onSnapshot(function(snap){
-  cells = {}; rows = {}; cmts = []; logs = []; pres = {};
+  cells = {}; rows = {}; cmts = []; logs = []; pres = {}; meets = {}; snaps = {};
   snap.forEach(function(doc){
     var d = doc.data();
     if (d.t==="cell") cells[d.dim+"_"+d.row+"_"+d.role] = d;
@@ -437,9 +1036,12 @@ if (db) db.collection(COL).onSnapshot(function(snap){
     else if (d.t==="cmt") cmts.push(d);
     else if (d.t==="log") logs.push(d);
     else if (d.t==="pres") pres[d.who] = d;
+    else if (d.t==="meet") meets[doc.id] = d;
+    else if (d.t==="snap") snaps[d.date] = d;
   });
   if (!connected){ connected = true; setStatus("已連線，即時同步", "ok"); }
   render();
+  doSnap();
 }, function(err){
   setStatus("連線失敗："+(err&&err.code||""), "bad");
 });
@@ -461,11 +1063,49 @@ document.addEventListener("click", function(ev){
   }
   var act = t.getAttribute && t.getAttribute("data-act");
   if (!act && t.closest){
-    var hd = t.closest("[data-act='g24toggle']");
-    if (hd) act = "g24toggle";
+    var hd = t.closest("[data-act]");
+    if (hd) act = hd.getAttribute("data-act");
   }
+  if (act==="print"){ window.print(); return; }
+  if (act==="ovtoggle"){ ovOpen = !ovOpen; renderOv(); return; }
+  if (act==="ovnew"){ ovMode = "new"; renderOv(); return; }
+  if (act==="ovold"){ ovMode = "old"; renderOv(); return; }
   if (act==="g24toggle"){ g24open = !g24open; renderG24(); return; }
-  var td = t.closest ? t.closest("td[data-cell]") : null;
+  if (act==="ovlclose"){ ovlClose(); return; }
+  if (act==="export"){ expBackup(); return; }
+  if (act==="restore"){
+    var day = (t.getAttribute && t.getAttribute("data-day")) || (t.closest("[data-day]") && t.closest("[data-day]").getAttribute("data-day"));
+    if (day) restoreSnap(day);
+    return;
+  }
+  if (act==="revert"){
+    var rk = t.getAttribute("data-key"), ri = parseInt(t.getAttribute("data-i"),10);
+    var cc = cells[rk];
+    var hv = cc && cc.hist && cc.hist[ri];
+    if (!hv){ toast("找不到該版本"); return; }
+    if (!who()){ toast("請先選擇上方你的名字"); return; }
+    if (cellLocked(rk)){ toast("此格已定案，先按解鎖"); return; }
+    ovlClose();
+    saveCell(rk, (hv.lines||[]).slice(), false, "還原舊版").catch(function(){});
+    return;
+  }
+  if (act==="addmeet"){
+    if (!who()){ toast("請先選擇上方你的名字"); return; }
+    openMeetForm(); return;
+  }
+  if (act==="meetsave"){
+    var fd = document.getElementById("mfd"), ft = document.getElementById("mft"), fl = document.getElementById("mfl");
+    if (!fd || !ft || !fl) return;
+    var vd = fd.value.trim(), vt = ft.value.trim();
+    var vl = fl.value.split("\n").map(function(x){return x.trim();}).filter(function(x){return x;});
+    if (!vd || !vt){ toast("請填日期與會議名"); return; }
+    var mts = Date.now();
+    fsSet("meet_"+mts, {t:"meet", id:String(mts), date:vd, title:vt, lines:vl, by:who(), at:now(), ts:mts})
+      .then(function(){ addLog("新增會議紀錄", vd+" "+vt); }).catch(function(){});
+    ovlClose();
+    return;
+  }
+  var td = t.closest ? t.closest("[data-cell]") : null;
 
   // 自訂列改名
   var re = t.getAttribute && t.getAttribute("data-rowedit");
@@ -475,7 +1115,7 @@ document.addEventListener("click", function(ev){
     var nv = window.prompt("修改內容名稱", cur);
     if (nv && nv.trim() && nv.trim()!==cur){
       fsSet("row_"+curDim+"_"+re, {t:"row", dim:curDim, id:re, name:nv.trim(), order:(Date.now()), by:who()})
-        .then(function(){ addLog("修改列名", nv.trim()); });
+        .then(function(){ addLog("修改列名", nv.trim()); }).catch(function(){});
     }
     return;
   }
@@ -485,30 +1125,43 @@ document.addEventListener("click", function(ev){
     if (nm && nm.trim()){
       var rid = "r"+Date.now();
       fsSet("row_"+curDim+"_"+rid, {t:"row", dim:curDim, id:rid, name:nm.trim(), order:Date.now(), by:who()})
-        .then(function(){ addLog("新增內容列", nm.trim()); });
+        .then(function(){ addLog("新增內容列", nm.trim()); }).catch(function(){});
     }
+    return;
+  }
+  if (act==="unlock"){
+    if (!td) return;
+    if (!who()){ toast("請先選擇上方你的名字"); return; }
+    unlockCell(td.getAttribute("data-cell"));
+    return;
+  }
+  if (act==="hist"){
+    if (!td) return;
+    openHist(td.getAttribute("data-cell"));
     return;
   }
   if ((act==="edit") || (t.closest && t.closest(".cellin"))){
     if (!td) return;
+    var ek = td.getAttribute("data-cell");
+    if (cellLocked(ek)){ toast("此格已定案，先按解鎖"); return; }
     if (!who()){ toast("請先選擇上方你的名字"); return; }
-    editingCell = td.getAttribute("data-cell"); panelCell = null;
+    editingCell = ek; panelCell = null;
     setPres(editingCell);
     render();
     var ta = document.getElementById("eta"); if (ta) ta.focus();
     return;
   }
   if (act==="cancel"){ editingCell = null; setPres(null); render(); return; }
-  if (act==="save"){
+  if (act==="save" || act==="savelock"){
     if (!td) return;
     var key = td.getAttribute("data-cell");
-    var ta = document.getElementById("eta");
-    var lines = ta.value.split("\n").map(function(x){return x.trim();}).filter(function(x){return x;});
+    var ta2 = document.getElementById("eta");
+    if (!ta2) return;
+    var lines = ta2.value.split("\n").map(function(x){return x.trim();}).filter(function(x){return x;});
+    var lock = (act==="savelock");
     editingCell = null; setPres(null);
-    if (lines.join("\n") === cellLines(key).join("\n")){ render(); return; }
-    var p = key.split("_");
-    fsSet("cell_"+key, {t:"cell", dim:p[0], row:p[1], role:p[2], lines:lines, by:who(), at:now(), ts:Date.now()})
-      .then(function(){ addLog("修改內容", cName(key)); });
+    if (!lock && lines.join("\n") === cellLines(key).join("\n")){ render(); return; }
+    saveCell(key, lines, lock).catch(function(){});
     render();
     return;
   }
@@ -527,10 +1180,11 @@ document.addEventListener("click", function(ev){
     var ts = Date.now();
     fsSet("cmt_"+ts+"_"+Math.floor(Math.random()*1000),
       {t:"cmt", cell:panelCell, author:who(), text:txt, at:now(), ts:ts})
-      .then(function(){ addLog("留言", cName(panelCell)); });
+      .then(function(){ addLog("留言", cName(panelCell)); }).catch(function(){});
     ci.value = "";
     return;
   }
+  if (t.id==="ovl"){ ovlClose(); return; }
 });
 document.getElementById("cinput").addEventListener("keydown", function(e){
   if (e.key==="Enter"){ document.getElementById("csend").click(); }
@@ -538,8 +1192,8 @@ document.getElementById("cinput").addEventListener("keydown", function(e){
 
 /* ---------- 啟動 ---------- */
 try{
-  var w = localStorage.getItem("kz_who");
-  if (w){ document.querySelectorAll(".pill").forEach(function(p){ if(p.getAttribute("data-who")===w) p.classList.add("on"); }); }
+  var w0 = localStorage.getItem("kz_who");
+  if (w0){ document.querySelectorAll(".pill").forEach(function(p){ if(p.getAttribute("data-who")===w0) p.classList.add("on"); }); }
 }catch(e){}
 render();
 </script>
