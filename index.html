@@ -214,7 +214,7 @@ td.duty{min-width:180px;}
 <div class="wrap">
 
 <div class="topbar">
-  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K0918-03</span>
+  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K0918-04</span>
   <span class="pill" data-who="艋舺良">艋舺良</span>
   <span class="pill" data-who="沈協理">沈協理</span>
   <span class="tbtn" data-act="print">列印</span>
@@ -256,8 +256,8 @@ td.duty{min-width:180px;}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-/* ================= KIMZO-WORK 職掌共編 K0918-03 ================= */
-var CODE_VERSION = "K0918-03";
+/* ================= KIMZO-WORK 職掌共編 K0918-04 ================= */
+var CODE_VERSION = "K0918-04";
 var firebaseConfig = {
   apiKey: "AIzaSyD8UQE3Y2AyWo3-2KXEN0xJeGswE86bebI",
   authDomain: "g95-work-management.firebaseapp.com",
@@ -554,7 +554,7 @@ var FW_24 = {
 
 /* ---------- 內建會議紀錄（程式常數，非資料庫） ---------- */
 var MEET_FIX = [
-  {id:"f0827", date:"115-08-27", title:"老闆第一次會議", src:"逐字稿重點分析 0827",
+  {id:"f0827", date:"115-08-27", title:"第一次檢討會議", src:"",
    lines:[
     "先列各階職掌，由 PO 群組彙整，下次會議再談評分",
     "層層打考核：專案對所長、所長對主任、主任對工程師與組長",
@@ -563,7 +563,7 @@ var MEET_FIX = [
     "內控進度依樓高與樓地板面積訂標準工期",
     "請購獨立成大項，且進度與內容品質分開；發包新增分包計劃；合約變更單分 K 項與 J 項；錯誤成本歸回原項目"
    ]},
-  {id:"f0916", date:"115-09-16", title:"老闆第二次會議", src:"逐字稿重點分析 0916",
+  {id:"f0916", date:"115-09-16", title:"第二次檢討會議", src:"",
    lines:[
     "架構改四區塊：工事進度、工事品質、工務進度、工務品質",
     "分包計劃移出評核，改成本管理追蹤，責任歸所長",
@@ -791,7 +791,7 @@ function renderMeets(){
     h += '<div class="mb"><ol>';
     (m.lines||[]).forEach(function(l){ h += "<li>"+esc(l)+"</li>"; });
     h += '</ol></div>';
-    h += '<div class="mf"><span>來源：'+esc(m.src||"手動新增")+'</span>';
+    h += '<div class="mf"><span></span>';
     h += '<button class="cbtn'+(n?" has":"")+'" data-act="cmt">註'+(n?" "+n:"")+'</button></div>';
     h += '</div>';
   });
