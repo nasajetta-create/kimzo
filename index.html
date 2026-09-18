@@ -22,6 +22,7 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
 .pill{border:1px solid #999;padding:4px 14px;font-size:13.5px;background:#f5f5f5;cursor:pointer;user-select:none;}
 .pill.on{background:var(--dim);color:#fff;border-color:var(--dim);font-weight:bold;}
 .tbtn{border:1px solid #999;padding:4px 12px;font-size:12.5px;background:#fff;color:#555;cursor:pointer;user-select:none;}
+.tbtn.son{background:#8a5a00;color:#fff;border-color:#8a5a00;font-weight:bold;}
 #status{margin-left:auto;font-size:12.5px;color:var(--muted);}
 #status.ok{color:var(--ok);} #status.bad{color:var(--bad);}
 
@@ -106,8 +107,22 @@ td.duty{min-width:180px;}
 .ebtns button{font-size:12.5px;padding:4px 12px;border:1px solid #999;cursor:pointer;background:#fff;}
 .ebtns .save{background:var(--dim);color:#fff;border-color:var(--dim);}
 .ebtns .lock{background:var(--ok);color:#fff;border-color:var(--ok);}
-.addrow{margin:8px 0 0;}
+.addrow{margin:8px 0 0;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
 .addrow button{font-size:12.5px;padding:5px 14px;border:1px solid var(--dim);background:#fff;color:var(--dim);cursor:pointer;}
+.addrow .agl{font-size:12px;color:#666;margin-left:6px;}
+.addrow select{font-size:12.5px;padding:3px 6px;border:1px solid #999;background:#fff;font-family:inherit;}
+/* ---------- 編輯架構 ---------- */
+.sctl{display:flex;gap:3px;flex-wrap:wrap;margin-top:5px;}
+.sctl button{font-size:10.5px;padding:0 5px;border:1px solid #8a5a00;background:#fff;color:#8a5a00;
+  cursor:pointer;font-family:inherit;line-height:1.7;}
+.sctl button:hover{background:#8a5a00;color:#fff;}
+td.dim .sctl{justify-content:center;}
+td.dim .sctl button{background:#fff;}
+.hidsec{margin-top:8px;background:var(--card);border:1.5px solid #8a5a00;padding:6px 12px;font-size:12px;color:#555;}
+.hidsec h3{font-size:12.5px;margin:0 0 4px;color:#8a5a00;}
+.hidsec .hrow{display:flex;gap:10px;align-items:center;line-height:2;flex-wrap:wrap;}
+.hidsec .hw{color:#999;font-size:11px;}
+.hidsec button{font-size:11px;padding:1px 10px;border:1px solid #8a5a00;background:#fff;color:#8a5a00;cursor:pointer;}
 
 /* ---------- 會議紀錄 ---------- */
 .mtop{margin:8px 0 10px;}
@@ -194,7 +209,8 @@ td.duty{min-width:180px;}
   html,body{background:#fff;}
   .wrap{max-width:none;padding:0;}
   .topbar .pill,.topbar .tbtn,#status,.tabs,.ovbar,.ovbox,#g24box,
-  .cpanel,.logsec,.bksec,.addrow,.foot,.toast,.ovl,.mtop{display:none !important;}
+  .cpanel,.logsec,.bksec,.addrow,.foot,.toast,.ovl,.mtop,
+  .sctl,.hidsec,#hidsec{display:none !important;}
   .topbar{border:none;padding:0 0 6px;margin-bottom:6px;}
   .tblbox{border:1px solid #000;overflow:visible;}
   table{min-width:0;width:100%;font-size:11px;}
@@ -214,9 +230,10 @@ td.duty{min-width:180px;}
 <div class="wrap">
 
 <div class="topbar">
-  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K0918-04</span>
+  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K0918-05</span>
   <span class="pill" data-who="艋舺良">艋舺良</span>
   <span class="pill" data-who="沈協理">沈協理</span>
+  <span class="tbtn" id="stbtn" data-act="struct">編輯架構</span>
   <span class="tbtn" data-act="print">列印</span>
   <span id="status">連線中…</span>
 </div>
@@ -227,6 +244,7 @@ td.duty{min-width:180px;}
 <div id="g24box"></div>
 <div class="tblbox" id="tblbox"><table id="tbl"></table></div>
 <div id="meetbox"></div>
+<div id="hidsec"></div>
 <div class="addrow" id="addrow"></div>
 
 <div class="cpanel" id="cpanel">
@@ -245,7 +263,8 @@ td.duty{min-width:180px;}
 
 <div class="foot">
 規則：基礎＝2024版；第一輪＝職掌，不寫評分基準。每構面上方灰色區塊＝2024 原始資料的項目與內容（唯讀對照），下方＝更新後對照表。構面1、2 已預載並預設定案，需先解鎖才能修改；構面3～6 已預載項目列，格子點開即可填寫。<br>
-點格子編輯、按「註」留言；點格底的修改者時間可看該格的歷史版本。每日自動保存一次快照，可於下方備份區還原或匯出。
+點格子編輯、按「註」留言；點格底的修改者時間可看該格的歷史版本。每日自動保存一次快照，可於下方備份區還原或匯出。<br>
+編輯架構開關可改項目與內容名稱、順序與隱藏，隱藏可復原。
 </div>
 
 </div>
@@ -256,8 +275,8 @@ td.duty{min-width:180px;}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-/* ================= KIMZO-WORK 職掌共編 K0918-04 ================= */
-var CODE_VERSION = "K0918-04";
+/* ================= KIMZO-WORK 職掌共編 K0918-05 ================= */
+var CODE_VERSION = "K0918-05";
 var firebaseConfig = {
   apiKey: "AIzaSyD8UQE3Y2AyWo3-2KXEN0xJeGswE86bebI",
   authDomain: "g95-work-management.firebaseapp.com",
@@ -477,36 +496,26 @@ var DATA24_ITEMS = {
  ]}
 };
 
-/* ---------- 六構面架構總覽（唯讀） ---------- */
-var FW_NEW = {
-  sub:"基礎＝2024版　｜　構面1、2 待會議檢討；構面3～6 檢討中　｜　●＝2024 版沒有的項目",
-  bands:[
-    {c:"c1", h:"1 進度管理", tag:"待會議檢討", cols:[
-      ["1-1 工事進度管理", ["1 內控進度","2 階段進度／里程碑 ●"]],
-      ["1-2 工務作業進度", ["1 分包計劃 ●","2 請購提送","3 施工圖","4 採發","5 單項計畫 ●"]]
-    ]},
-    {c:"c2", h:"2 安全衛生管理", tag:"待會議檢討", cols:[
-      ["2-1 安全衛生管理", ["1 稽核缺失改善　2 重大職災防止　3 勞檢應對　4 職安活動參與　5 加分項 ●"]]
-    ]},
-    {c:"c3", h:"3 工事與品質管理", tag:"檢討中", cols:[
-      ["3-1 工事管理", ["1 作業基準佈設","2 作業程序與界面","3 場域整理整頓","4 障礙預排"]],
-      ["3-2 工事品質管理", ["1 自主查驗 ●","2 施工品質把關","3 缺失改善複驗 ●","4 業主查核 ●"]],
-      ["3-3 工務作業品質", ["1 請購內容品質","2 日報與紀錄 ●","3 會議與紀錄 ●","4 行政評比"]]
-    ]},
-    {c:"c4", h:"4 預算成本管理", tag:"檢討中", cols:[
-      ["4-1 合約管理", ["1 合約結算","2 變更單K項 ●","3 變更單J項 ●","4 估驗計價"]],
-      ["4-2 點工移工管理", ["1 點工計畫","2 派工執行 ●","3 代雇代扣"]],
-      ["4-3 材料使用管理", ["1 材料進場","2 損耗控管","3 剩料調轉"]]
-    ]},
-    {c:"c5", h:"5 領導統御", tag:"檢討中", cols:[
-      ["5-1 向上管理協調", ["1 問題反映 ●","2 平行協調","3 業主關係"]],
-      ["5-2 訓練培育", ["1 教育訓練 ●","2 所級訓練 ●","3 接班培養 ●"]]
-    ]},
-    {c:"c6", h:"6 工作行為與態度", tag:"待檢討", cols:[
-      ["6-1 個人工作態度", ["1 出勤狀況　2 服裝儀容　3 個人裝備　4 工務所整理整頓　5 專業證照 ●　6 公司活動參與度 ●"]]
-    ]}
-  ],
-  foot:"與 8/26 版差異：1-2 新增分包計劃並依流程重排；構面2 改為缺失改善等五項（含新增加分項）；構面6 維持原內容待檢討。"
+/* ---------- 六構面架構總覽 ---------- */
+/* 更新版＝依現行架構（FIXED_ROWS＋自訂列＋rowmod／grpmod）即時產生 */
+var FW_NEW_SUB = "基礎＝2024版　｜　構面1、2 待會議檢討；構面3～6 檢討中　｜　●＝2024 版沒有的項目";
+var FW_NEW_FOOT = "與 8/26 版差異：1-2 新增分包計劃並依流程重排；構面2 改為缺失改善等五項（含新增加分項）；構面6 維持原內容待檢討。";
+var FW_META = {
+  m1:{c:"c1", h:"1 進度管理",     tag:"待會議檢討"},
+  m2:{c:"c2", h:"2 安全衛生管理", tag:"待會議檢討"},
+  m3:{c:"c3", h:"3 工事與品質管理", tag:"檢討中"},
+  m4:{c:"c4", h:"4 預算成本管理", tag:"檢討中"},
+  m5:{c:"c5", h:"5 領導統御",     tag:"檢討中"},
+  m6:{c:"c6", h:"6 工作行為與態度", tag:"待檢討"}
+};
+/* ●＝2024 版沒有的項目，以 FIXED_ROWS 的 row id 為準；自訂新增列不帶點 */
+var DOT_IDS = {
+  m1:["112","121","125"],
+  m2:["215"],
+  m3:["321","323","324","332","333"],
+  m4:["412","413","422"],
+  m5:["511","521","522","523"],
+  m6:["615","616"]
 };
 var FW_24 = {
   sub:"2024 年度評核表原文整理　｜　工程師、組長表僅有構面 1、2、3、6",
@@ -582,6 +591,9 @@ var logs = [];     // {author, action, name, at, ts}
 var pres = {};     // who -> {cell, ts}
 var meets = {};    // docId -> {t:"meet", id, date, title, lines, by, at, ts}
 var snaps = {};    // date(YYYYMMDD) -> {t:"snap", date, ts, data}
+var rowmods = {};  // key dim_rowid -> {t:"rowmod", dim, row, name, hidden, ord, by, at, ts}
+var grpmods = {};  // key dim|原始群組名 -> {t:"grpmod", dim, grp, name, by, at, ts}
+var structMode = false; // 編輯架構模式：只影響當前瀏覽器，不寫資料庫
 var curDim = "m1";
 var editingCell = null;
 var panelCell = null;
@@ -654,15 +666,69 @@ function dimCount(dim){
   list.forEach(function(r){ if (rowState(dim, r.id)==="done") d++; });
   return {done:d, total:list.length};
 }
-function allRows(dim){
+function gkey(g){
+  return encodeURIComponent(String(g==null?"":g)).replace(/[^A-Za-z0-9]/g,"_");
+}
+function grpName(dim, g){
+  var m = grpmods[dim+"|"+g];
+  return (m && m.name) ? m.name : g;
+}
+/* 原始架構：固定列在前、自訂列在後，base＝原始索引 */
+function baseRows(dim){
   var fixed = FIXED_ROWS[dim] ? FIXED_ROWS[dim].slice() : [];
   var extra = (rows[dim]||[]).slice().sort(function(a,b){return (a.order||0)-(b.order||0);});
-  return fixed.concat(extra);
+  var out = [];
+  fixed.forEach(function(r){
+    out.push({id:r.id, grp:r.grp||"自訂", name:r.name, fixed:true, base:out.length});
+  });
+  extra.forEach(function(r){
+    out.push({id:r.id, grp:r.grp||"自訂", name:r.name, fixed:false, base:out.length});
+  });
+  return out;
+}
+/* 套用 rowmod（改名／隱藏／排序）；withHidden 為 true 時連隱藏列一起回傳 */
+function allRows(dim, withHidden){
+  var out = [];
+  baseRows(dim).forEach(function(r){
+    var m = rowmods[dim+"_"+r.id];
+    var o = {id:r.id, grp:r.grp, name:r.name, fixed:r.fixed, base:r.base, hidden:false, ord:r.base*10};
+    if (m){
+      if (typeof m.name==="string" && m.name) o.name = m.name;
+      if (m.hidden===true) o.hidden = true;
+      if (typeof m.ord==="number") o.ord = m.ord;
+    }
+    out.push(o);
+  });
+  var gOrder = [], gMap = {};
+  out.forEach(function(r){
+    if (!gMap[r.grp]){ gMap[r.grp] = []; gOrder.push(r.grp); }
+    gMap[r.grp].push(r);
+  });
+  var fin = [];
+  gOrder.forEach(function(g){
+    gMap[g].sort(function(a,b){ return (a.ord-b.ord) || (a.base-b.base); });
+    gMap[g].forEach(function(r){ fin.push(r); });
+  });
+  if (!withHidden) fin = fin.filter(function(r){ return !r.hidden; });
+  return fin;
+}
+function groupList(dim){
+  var seen = {}, out = [];
+  allRows(dim, true).forEach(function(r){
+    if (!seen[r.grp]){ seen[r.grp] = 1; out.push(r.grp); }
+  });
+  if (!seen["自訂"]) out.push("自訂");
+  return out;
 }
 function rowName(dim,rowId){
-  var list = allRows(dim);
+  var list = allRows(dim, true);
   for (var i=0;i<list.length;i++) if (list[i].id===rowId) return list[i].name;
   return rowId;
+}
+function rowHasLock(dim,rowId){
+  var f = false;
+  ROLES.forEach(function(r){ if (cellLocked(dim+"_"+rowId+"_"+r[0])) f = true; });
+  return f;
 }
 function allMeets(){
   var out = MEET_FIX.map(function(m){
@@ -692,6 +758,23 @@ function cName(key){
 }
 
 /* ---------- 架構總覽 ---------- */
+function fwNew(){
+  var bands = [];
+  DIMS.forEach(function(d){
+    var meta = FW_META[d.id] || {c:"c1", h:d.name, tag:""};
+    var list = allRows(d.id);
+    var gOrder = [], gMap = {};
+    list.forEach(function(r){
+      if (!gMap[r.grp]){ gMap[r.grp] = []; gOrder.push(r.grp); }
+      var dot = ((DOT_IDS[d.id]||[]).indexOf(r.id) >= 0) ? " ●" : "";
+      gMap[r.grp].push(r.name + dot);
+    });
+    var cols = gOrder.map(function(g){ return [grpName(d.id, g), gMap[g]]; });
+    if (!cols.length) cols = [["（尚無內容列）", ["—"]]];
+    bands.push({c:meta.c, h:meta.h, tag:meta.tag, cols:cols});
+  });
+  return {sub:FW_NEW_SUB, bands:bands, foot:FW_NEW_FOOT};
+}
 function fwHtml(fw){
   var h = '<div class="ovsub">'+esc(fw.sub)+'</div>';
   fw.bands.forEach(function(b){
@@ -714,7 +797,7 @@ function renderOv(){
     h += '<div class="ovbox"><div class="ovsw">'
        + '<span class="'+(ovMode==="new"?"on":"")+'" data-act="ovnew">更新版</span>'
        + '<span class="'+(ovMode==="old"?"on":"")+'" data-act="ovold">2024 原稿</span></div>';
-    h += fwHtml(ovMode==="new" ? FW_NEW : FW_24);
+    h += fwHtml(ovMode==="new" ? fwNew() : FW_24);
     h += '</div>';
   }
   document.getElementById("ovwrap").innerHTML = h;
@@ -798,6 +881,7 @@ function renderMeets(){
   box.innerHTML = h;
 }
 function render(){
+  renderStructBtn();
   renderOv();
   renderTabs();
   renderG24();
@@ -807,6 +891,7 @@ function render(){
     tblbox.style.display = "none";
     document.getElementById("tbl").innerHTML = "";
     document.getElementById("addrow").innerHTML = "";
+    document.getElementById("hidsec").innerHTML = "";
     renderLog(); renderBk(); renderPanel();
     return;
   }
@@ -827,13 +912,27 @@ function render(){
     h += "<tr>";
     if (!printed[g]){
       printed[g] = true;
-      var gshow = g.split(" ");
-      h += '<td class="dim" rowspan="'+spans[g]+'">'+esc(gshow[0])+'<br>'+esc(gshow.slice(1).join(""))+'</td>';
+      var gn = grpName(curDim, g);
+      var gshow = gn.split(" ");
+      h += '<td class="dim" rowspan="'+spans[g]+'">'+esc(gshow[0])
+         + (gshow.length>1 ? '<br>'+esc(gshow.slice(1).join("")) : "");
+      if (structMode){
+        h += '<div class="sctl"><button data-act="grpren" data-grp="'+esc(g)+'">改名</button></div>';
+      }
+      h += '</td>';
     }
-    var fixed = FIXED_ROWS[curDim] && FIXED_ROWS[curDim].some(function(x){return x.id===r.id;});
-    h += '<td class="item"><span class="grpm">'+esc(g)+'</span>'
+    h += '<td class="item"><span class="grpm">'+esc(grpName(curDim,g))+'</span>'
        + '<span class="dot '+dcls+'"></span>'
-       + '<span class="rn"'+(fixed?"":' data-rowedit="'+r.id+'"')+'>'+esc(r.name)+'</span></td>';
+       + '<span class="rn"'+(r.fixed?"":' data-rowedit="'+esc(r.id)+'"')+'>'+esc(r.name)+'</span>';
+    if (structMode){
+      h += '<div class="sctl">'
+         + '<button data-act="rowren" data-row="'+esc(r.id)+'">改名</button>'
+         + '<button data-act="rowup" data-row="'+esc(r.id)+'">上移</button>'
+         + '<button data-act="rowdn" data-row="'+esc(r.id)+'">下移</button>'
+         + '<button data-act="rowhide" data-row="'+esc(r.id)+'">隱藏</button>'
+         + '</div>';
+    }
+    h += '</td>';
     ROLES.forEach(function(role){
       var key = curDim+"_"+r.id+"_"+role[0];
       h += '<td class="duty" data-cell="'+key+'">';
@@ -844,8 +943,38 @@ function render(){
     h += "</tr>";
   });
   document.getElementById("tbl").innerHTML = h;
-  document.getElementById("addrow").innerHTML = '<button data-act="addrow">新增內容列</button>';
-  renderLog(); renderBk(); renderPanel();
+  var ah = '<button data-act="addrow">新增內容列</button>';
+  if (structMode){
+    ah += '<span class="agl">放入項目</span><select id="addgrp">';
+    groupList(curDim).forEach(function(g){
+      ah += '<option value="'+esc(g)+'">'+esc(grpName(curDim,g))+'</option>';
+    });
+    ah += '</select>';
+  }
+  document.getElementById("addrow").innerHTML = ah;
+  renderHid(); renderLog(); renderBk(); renderPanel();
+}
+function renderStructBtn(){
+  var b = document.getElementById("stbtn");
+  if (!b) return;
+  b.className = "tbtn" + (structMode ? " son" : "");
+  b.textContent = structMode ? "編輯架構 開" : "編輯架構";
+}
+function renderHid(){
+  var el = document.getElementById("hidsec");
+  if (!el) return;
+  if (!structMode || curDim==="meet"){ el.innerHTML = ""; return; }
+  var hid = allRows(curDim, true).filter(function(r){ return r.hidden; });
+  if (!hid.length){ el.innerHTML = ""; return; }
+  var h = '<div class="hidsec"><h3>已隱藏 '+hid.length+' 列</h3>';
+  hid.forEach(function(r){
+    var m = rowmods[curDim+"_"+r.id] || {};
+    h += '<div class="hrow"><span>'+esc(grpName(curDim,r.grp))+'　'+esc(r.name)+'</span>'
+       + '<span class="hw">'+esc(m.by||"")+' '+esc(m.at||"")+' 隱藏</span>'
+       + '<button data-act="rowshow" data-row="'+esc(r.id)+'">復原</button></div>';
+  });
+  h += '</div>';
+  el.innerHTML = h;
 }
 function renderLog(){
   var el = document.getElementById("loglist");
@@ -936,6 +1065,62 @@ function setPres(cellKey){
   var w = who(); if (!w || !db) return;
   db.collection(COL).doc("pres_"+w).set({t:"pres", who:w, cell:cellKey, ts:Date.now()}).catch(function(){});
 }
+
+/* ---------- 架構編輯：rowmod / grpmod ---------- */
+function setRowMod(dim, rowId, patch){
+  var old = rowmods[dim+"_"+rowId] || {};
+  var d = {t:"rowmod", dim:dim, row:rowId,
+    hidden: (patch.hasOwnProperty("hidden") ? (patch.hidden===true) : (old.hidden===true)),
+    by:who(), at:now(), ts:Date.now()};
+  var nm = patch.hasOwnProperty("name") ? patch.name : old.name;
+  if (typeof nm==="string" && nm) d.name = nm;
+  var od = patch.hasOwnProperty("ord") ? patch.ord : old.ord;
+  if (typeof od==="number") d.ord = od;
+  return fsSet("rowmod_"+dim+"_"+rowId, d);
+}
+function doRowRename(dim, rowId){
+  if (!who()){ toast("請先選擇上方你的名字"); return; }
+  if (rowHasLock(dim, rowId)){ toast("此列有定案格，先解鎖"); return; }
+  var cur = rowName(dim, rowId);
+  var nv = window.prompt("修改內容名稱", cur);
+  if (!nv || !nv.trim() || nv.trim()===cur) return;
+  setRowMod(dim, rowId, {name:nv.trim()})
+    .then(function(){ addLog("改列名", cur+" 改為 "+nv.trim()); }).catch(function(){});
+}
+function doRowHide(dim, rowId, hide){
+  if (!who()){ toast("請先選擇上方你的名字"); return; }
+  if (hide && rowHasLock(dim, rowId)){ toast("此列有定案格，先解鎖"); return; }
+  var nm = rowName(dim, rowId);
+  setRowMod(dim, rowId, {hidden:hide})
+    .then(function(){ addLog(hide ? "隱藏列" : "復原列", nm); }).catch(function(){});
+}
+function moveRow(dim, rowId, dir){
+  if (!who()){ toast("請先選擇上方你的名字"); return; }
+  var vis = allRows(dim), cur = null, vi = -1;
+  vis.forEach(function(r,i){ if (r.id===rowId){ cur = r; vi = i; } });
+  if (!cur) return;
+  var k = vi + dir;
+  var nb = (k>=0 && k<vis.length && vis[k].grp===cur.grp) ? vis[k] : null;
+  if (!nb){ toast("已經在此項目的"+(dir<0?"最上面":"最下面")+"了"); return; }
+  var full = allRows(dim, true).filter(function(r){ return r.grp===cur.grp; });
+  var ia = -1, ib = -1;
+  full.forEach(function(r,i){ if (r.id===cur.id) ia = i; if (r.id===nb.id) ib = i; });
+  if (ia<0 || ib<0) return;
+  var tmp = full[ia]; full[ia] = full[ib]; full[ib] = tmp;
+  var jobs = full.map(function(r,i){ return setRowMod(dim, r.id, {ord:i*10}); });
+  Promise.all(jobs).then(function(){
+    addLog("移動列", cur.name+"（"+(dir<0?"上移":"下移")+"）");
+  }).catch(function(){});
+}
+function doGrpRename(dim, g){
+  if (!who()){ toast("請先選擇上方你的名字"); return; }
+  var cur = grpName(dim, g);
+  var nv = window.prompt("修改項目名稱", cur);
+  if (!nv || !nv.trim() || nv.trim()===cur) return;
+  fsSet("grpmod_"+dim+"_"+gkey(g),
+    {t:"grpmod", dim:dim, grp:g, name:nv.trim(), by:who(), at:now(), ts:Date.now()})
+    .then(function(){ addLog("改項目名", cur+" 改為 "+nv.trim()); }).catch(function(){});
+}
 function saveCell(key, lines, lock, actName){
   var p = key.split("_");
   var old = cells[key];
@@ -972,7 +1157,7 @@ function doSnap(){
   var ds = tpDay();
   if (snaps[ds]){ cleanSnaps(); return; }
   var payload;
-  try{ payload = JSON.stringify({cells:cells, rows:rows, meets:meets}); }
+  try{ payload = JSON.stringify({cells:cells, rows:rows, meets:meets, rowmods:rowmods, grpmods:grpmods}); }
   catch(e){ return; }
   try{
     db.collection(COL).doc("snap_"+ds).set({t:"snap", date:ds, ts:Date.now(), data:payload})
@@ -1008,11 +1193,20 @@ function restoreSnap(ds){
   Object.keys(o.meets||{}).forEach(function(mid){
     fsSet(mid, o.meets[mid]).catch(function(){}); n++;
   });
+  Object.keys(o.rowmods||{}).forEach(function(rk){
+    var rm = o.rowmods[rk];
+    if (rm && rm.dim && rm.row){ fsSet("rowmod_"+rm.dim+"_"+rm.row, rm).catch(function(){}); n++; }
+  });
+  Object.keys(o.grpmods||{}).forEach(function(gk){
+    var gm = o.grpmods[gk];
+    if (gm && gm.dim && gm.grp){ fsSet("grpmod_"+gm.dim+"_"+gkey(gm.grp), gm).catch(function(){}); n++; }
+  });
   addLog("還原備份", dayLabel(ds));
   toast("已送出還原 "+n+" 筆");
 }
 function expBackup(){
-  var o = {ver:CODE_VERSION, at:now(), cells:cells, rows:rows, cmts:cmts, logs:logs, meets:meets};
+  var o = {ver:CODE_VERSION, at:now(), cells:cells, rows:rows, cmts:cmts, logs:logs, meets:meets,
+           rowmods:rowmods, grpmods:grpmods};
   var txt;
   try{ txt = JSON.stringify(o, null, 1); }
   catch(e){ toast("匯出失敗"); return; }
@@ -1029,6 +1223,7 @@ function expBackup(){
 
 if (db) db.collection(COL).onSnapshot(function(snap){
   cells = {}; rows = {}; cmts = []; logs = []; pres = {}; meets = {}; snaps = {};
+  rowmods = {}; grpmods = {};
   snap.forEach(function(doc){
     var d = doc.data();
     if (d.t==="cell") cells[d.dim+"_"+d.row+"_"+d.role] = d;
@@ -1038,6 +1233,8 @@ if (db) db.collection(COL).onSnapshot(function(snap){
     else if (d.t==="pres") pres[d.who] = d;
     else if (d.t==="meet") meets[doc.id] = d;
     else if (d.t==="snap") snaps[d.date] = d;
+    else if (d.t==="rowmod") rowmods[d.dim+"_"+d.row] = d;
+    else if (d.t==="grpmod") grpmods[d.dim+"|"+d.grp] = d;
   });
   if (!connected){ connected = true; setStatus("已連線，即時同步", "ok"); }
   render();
@@ -1073,6 +1270,7 @@ document.addEventListener("click", function(ev){
   if (act==="g24toggle"){ g24open = !g24open; renderG24(); return; }
   if (act==="ovlclose"){ ovlClose(); return; }
   if (act==="export"){ expBackup(); return; }
+  if (act==="struct"){ structMode = !structMode; render(); return; }
   if (act==="restore"){
     var day = (t.getAttribute && t.getAttribute("data-day")) || (t.closest("[data-day]") && t.closest("[data-day]").getAttribute("data-day"));
     if (day) restoreSnap(day);
@@ -1107,25 +1305,30 @@ document.addEventListener("click", function(ev){
   }
   var td = t.closest ? t.closest("[data-cell]") : null;
 
-  // 自訂列改名
+  // 列名改名（自訂列點名稱，或編輯架構的改名鈕；統一走 rowmod）
   var re = t.getAttribute && t.getAttribute("data-rowedit");
-  if (re){
-    if (!who()){ toast("請先選擇上方你的名字"); return; }
-    var cur = rowName(curDim, re);
-    var nv = window.prompt("修改內容名稱", cur);
-    if (nv && nv.trim() && nv.trim()!==cur){
-      fsSet("row_"+curDim+"_"+re, {t:"row", dim:curDim, id:re, name:nv.trim(), order:(Date.now()), by:who()})
-        .then(function(){ addLog("修改列名", nv.trim()); }).catch(function(){});
-    }
+  if (re){ doRowRename(curDim, re); return; }
+  var srow = t.getAttribute && t.getAttribute("data-row");
+  if (act==="rowren"){ if (srow) doRowRename(curDim, srow); return; }
+  if (act==="rowup"){ if (srow) moveRow(curDim, srow, -1); return; }
+  if (act==="rowdn"){ if (srow) moveRow(curDim, srow, 1); return; }
+  if (act==="rowhide"){ if (srow) doRowHide(curDim, srow, true); return; }
+  if (act==="rowshow"){ if (srow) doRowHide(curDim, srow, false); return; }
+  if (act==="grpren"){
+    var sg = t.getAttribute && t.getAttribute("data-grp");
+    if (sg) doGrpRename(curDim, sg);
     return;
   }
   if (act==="addrow"){
     if (!who()){ toast("請先選擇上方你的名字"); return; }
+    var sel = document.getElementById("addgrp");
+    var ng = (sel && sel.value) ? sel.value : "自訂";
     var nm = window.prompt("新內容名稱（例：1 自主查驗）");
     if (nm && nm.trim()){
       var rid = "r"+Date.now();
-      fsSet("row_"+curDim+"_"+rid, {t:"row", dim:curDim, id:rid, name:nm.trim(), order:Date.now(), by:who()})
-        .then(function(){ addLog("新增內容列", nm.trim()); }).catch(function(){});
+      fsSet("row_"+curDim+"_"+rid,
+        {t:"row", dim:curDim, id:rid, name:nm.trim(), grp:ng, order:Date.now(), by:who()})
+        .then(function(){ addLog("新增內容列", grpName(curDim,ng)+"　"+nm.trim()); }).catch(function(){});
     }
     return;
   }
