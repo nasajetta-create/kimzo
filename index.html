@@ -75,16 +75,41 @@ th{background:var(--head);color:#fff;padding:6px 8px;border:1px solid #888;font-
 th.re{background:var(--r1)} th.rg{background:var(--r2)} th.rm{background:var(--r3)} th.rd{background:var(--r4)}
 td{border:1px solid var(--line);padding:0;vertical-align:top;}
 td.dim{background:var(--dim);color:#fff;font-weight:bold;text-align:center;font-size:13px;width:58px;padding:6px 4px;}
-td.item{background:var(--item);font-weight:bold;width:118px;padding:6px 8px;font-size:13px;}
+td.item{background:var(--item);font-weight:bold;width:170px;padding:6px 8px;font-size:13px;}
 td.item .rn{cursor:pointer;}
 td.item .rn:hover{color:var(--accent);text-decoration:underline;}
 td.duty{min-width:180px;}
 .grpm{display:none;}
 .rlab{display:none;}
-.dot{display:inline-block;width:8px;height:8px;margin-right:5px;vertical-align:middle;}
-.dot.d1{background:#2e7d32;}
-.dot.d2{background:#e08000;}
-.dot.d3{background:#bbb;}
+/* ---------- 列狀態標籤（K1008-01 取代原小方點） ---------- */
+.bg{display:inline-block;font-size:12px;font-weight:bold;padding:1px 7px;border:1.5px solid;line-height:1.5;white-space:nowrap;}
+.b1{color:#2e7d32;border-color:#2e7d32;background:#e8f5e9;}
+.b2{color:#b02a2a;border-color:#b02a2a;background:#fdecea;}
+.b3{color:#b86a00;border-color:#e08000;background:#fff4e0;}
+.b4{color:#888;border-color:#bbb;background:#f2f2f2;}
+td.item .rst{margin-bottom:4px;}
+td.item .why{font-weight:normal;font-size:11.5px;color:#b02a2a;line-height:1.6;margin-top:4px;}
+td.item .why u{color:#5e4b8a;cursor:pointer;}
+td.item .why u:hover{color:var(--accent);}
+td.item .why .unfx{color:#888;font-size:11px;text-decoration:underline dotted;cursor:pointer;margin-left:6px;white-space:nowrap;}
+td.item .why .unfx:hover{color:var(--accent);}
+.cfoot .fxbtn{border:1px solid #b02a2a;color:#b02a2a;background:#fff;font-size:10.5px;padding:0 5px;cursor:pointer;font-family:inherit;}
+.cfoot .fxbtn:hover{background:#fdecea;}
+/* ---------- 進度總表／狀態說明／篩選列 ---------- */
+.sumbox{background:#fff;border:1.5px solid #666;margin:-8px 0 10px;padding:10px 12px;overflow-x:auto;}
+table.st{min-width:0;font-size:13.5px;}
+.st th{padding:6px 8px;}
+.st td{padding:6px 10px;text-align:center;vertical-align:middle;}
+.st td.nm{text-align:left;font-weight:bold;background:#f0f4f8;width:200px;}
+.st td.z{color:#bbb;}
+.st tr.tot td{background:#f5f5f5;font-weight:bold;}
+.st td a{color:#1565c0;text-decoration:underline;font-weight:bold;cursor:pointer;}
+.legend{font-size:12.5px;color:#555;margin:0 0 10px;display:flex;gap:6px 14px;align-items:center;flex-wrap:wrap;}
+.legend .lg{display:inline-flex;gap:6px;align-items:center;}
+.fltbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#fff;border:1.5px solid #666;border-bottom:none;
+  padding:5px 12px;font-size:12.5px;color:#444;}
+.fltbar b{color:var(--ink);}
+.fltbar button{font-size:12px;padding:1px 12px;border:1px solid var(--dim);background:#fff;color:var(--dim);cursor:pointer;font-family:inherit;}
 .cellin{padding:6px 8px 3px;cursor:pointer;min-height:38px;}
 .cellin:hover{outline:2px solid var(--accent);outline-offset:-2px;}
 .cellin.lockd{cursor:default;background:#fafafa;}
@@ -199,6 +224,10 @@ td.dim .sctl button{background:#fff;}
   .cellin{padding:3px 10px 3px;}
   .cfoot{padding:1px 10px 6px;}
   .ovbox{padding:8px;}
+  .sumbox{padding:6px;}
+  .st td.nm{width:auto;}
+  .st th,.st td{padding:5px 4px;font-size:12.5px;}
+  .fltbar{border:1.5px solid #666;margin-bottom:8px;}
   .col{flex:1 1 100%;border-right:0;border-bottom:1px solid rgba(0,0,0,.12);}
   .col:last-child{border-bottom:0;}
 }
@@ -211,6 +240,12 @@ td.dim .sctl button{background:#fff;}
   .topbar .pill,.topbar .tbtn,#status,.tabs,.ovbar,.ovbox,#g24box,
   .cpanel,.logsec,.bksec,.addrow,.foot,.toast,.ovl,.mtop,
   .sctl,.hidsec,#hidsec{display:none !important;}
+  .sumbar .tg,.fltbar button,.cfoot .fxbtn,td.item .why .unfx{display:none !important;}
+  #sumwrap .ovbar{display:flex !important;background:#fff;color:#000;border:1px solid #000;border-bottom:none;padding:4px 8px;margin-bottom:0;}
+  .sumbox{border:1px solid #000;margin:0 0 6px;padding:4px;}
+  .st td a{color:#000;text-decoration:none;}
+  .legend{margin:0 0 6px;font-size:10.5px;}
+  td.item .why u{color:#000;text-decoration:none;}
   .topbar{border:none;padding:0 0 6px;margin-bottom:6px;}
   .tblbox{border:1px solid #000;overflow:visible;}
   table{min-width:0;width:100%;font-size:11px;}
@@ -230,7 +265,7 @@ td.dim .sctl button{background:#fff;}
 <div class="wrap">
 
 <div class="topbar">
-  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K0918-05</span>
+  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K1008-01</span>
   <span class="pill" data-who="艋舺良">艋舺良</span>
   <span class="pill" data-who="沈協理">沈協理</span>
   <span class="tbtn" id="stbtn" data-act="struct">編輯架構</span>
@@ -239,9 +274,17 @@ td.dim .sctl button{background:#fff;}
 </div>
 
 <div id="ovwrap"></div>
+<div id="sumwrap"></div>
+<div class="legend" id="legend">狀態說明：
+  <span class="lg"><span class="bg b1">已定案</span>四職務都定案</span>
+  <span class="lg"><span class="bg b2">待修正</span>定案後會議有新指示</span>
+  <span class="lg"><span class="bg b3">討論中</span>有內容、未全部定案</span>
+  <span class="lg"><span class="bg b4">未開始</span>格子全空</span>
+</div>
 
 <div class="tabs" id="tabs"></div>
 <div id="g24box"></div>
+<div id="fltbar"></div>
 <div class="tblbox" id="tblbox"><table id="tbl"></table></div>
 <div id="meetbox"></div>
 <div id="hidsec"></div>
@@ -264,6 +307,8 @@ td.dim .sctl button{background:#fff;}
 <div class="foot">
 規則：基礎＝2024版；第一輪＝職掌，不寫評分基準。每構面上方灰色區塊＝2024 原始資料的項目與內容（唯讀對照），下方＝更新後對照表。構面1、2 已預載並預設定案，需先解鎖才能修改；構面3～6 已預載項目列，格子點開即可填寫。<br>
 點格子編輯、按「註」留言；點格底的修改者時間可看該格的歷史版本。每日自動保存一次快照，可於下方備份區還原或匯出。<br>
+列狀態四種：已定案＝四職務都定案（標籤日期＝最後定案日）；待修正＝定案後會議有新指示（標籤日期＝會議日）；討論中＝有內容、未全部定案；未開始＝格子全空。上方進度總表點數字可跳到該構面並只顯示該狀態。<br>
+定案格可直接按「標記待修正」（不必先解鎖），選會議並填要修正什麼；修正完把該列四格都「儲存並定案」後，自動變回已定案；也可按原因後的「取消待修正」手動取消。<br>
 編輯架構開關可改項目與內容名稱、順序與隱藏，隱藏可復原。
 </div>
 
@@ -275,8 +320,10 @@ td.dim .sctl button{background:#fff;}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-/* ================= KIMZO-WORK 職掌共編 K0918-05 ================= */
-var CODE_VERSION = "K0918-05";
+/* ================= KIMZO-WORK 職掌共編 K1008-01 ================= */
+/* K1008-01：進度總表（點數字篩選）、頁籤狀態文字、列狀態標籤（已定案／待修正／討論中／未開始）、
+   標記待修正（fix_ 文件，四格重新定案後自動解除）、狀態說明列；K0918-05 為前一版 */
+var CODE_VERSION = "K1008-01";
 var firebaseConfig = {
   apiKey: "AIzaSyD8UQE3Y2AyWo3-2KXEN0xJeGswE86bebI",
   authDomain: "g95-work-management.firebaseapp.com",
@@ -413,6 +460,26 @@ var SEED = {
   "m2_215_m":["提出新的勞安構想且獲採用","對外單位獲獎（路跑、競賽等）"],
   "m2_215_d":["提出新的勞安構想且獲採用","對外單位獲獎（路跑、競賽等）"]
 };
+
+/* ---------- 預載定案日：預載格（無資料庫文件）定案時間，構面1＝9/07、構面2＝9/08 ---------- */
+var SEED_LOCK_TS = {
+  m1: Date.UTC(2026,8,7,4,0,0),   // 2026-09-07 12:00 台北
+  m2: Date.UTC(2026,8,8,4,0,0)    // 2026-09-08 12:00 台北
+};
+/* ---------- 預載待修正（資料庫沒有該列 fix_ 文件時才使用） ---------- */
+/* ts＝2026-09-16 23:59:59 台北；四格都在此之後重新定案即自動解除 */
+var FIX_SEED_TS = Date.UTC(2026,8,16,15,59,59);
+var FIX_SEED = {};
+[
+  ["121","移出評核，改到成本管理追蹤，責任歸所長（主任討論分擔），不由工程師發動"],
+  ["122","請購內容加三項＝進場時間表、該項工程預計進度、業主合約事宜（示疑單，先問營業部）"],
+  ["123","進度責任只在主任、所長；工程師在施工圖屬品質（看懂圖）"],
+  ["124","進度責任只在主任、所長"],
+  ["125","改名單項工程，下分計劃書／單項工程施工圖／材料送審（材料送審新增，只管進度）"]
+].forEach(function(x){
+  FIX_SEED["m1_"+x[0]] = {t:"fix", dim:"m1", row:x[0], on:true, meet:"f0916", why:x[1],
+    by:"預載", at:"09/16", ts:FIX_SEED_TS, seed:true};
+});
 
 /* ---------- 2024 原始資料：評分基準全文（保留，第二輪評分用，不渲染） ---------- */
 var DATA24_FULL = {
@@ -593,6 +660,14 @@ var meets = {};    // docId -> {t:"meet", id, date, title, lines, by, at, ts}
 var snaps = {};    // date(YYYYMMDD) -> {t:"snap", date, ts, data}
 var rowmods = {};  // key dim_rowid -> {t:"rowmod", dim, row, name, hidden, ord, by, at, ts}
 var grpmods = {};  // key dim|原始群組名 -> {t:"grpmod", dim, grp, name, by, at, ts}
+var fixes = {};    // key dim_rowid -> {t:"fix", dim, row, on, meet, why, by, at, ts}（on:false＝取消，不刪文件）
+var stFilter = null;    // 進度總表篩選：done / fix / wip / todo
+var sumOpen = true;     // 進度總表展開狀態（localStorage kz_sumopen）
+var fixTarget = null;   // 標記待修正對話框的目標 {dim,row}
+var ST_NAME = {done:"已定案", fix:"待修正", wip:"討論中", todo:"未開始"};
+var ST_SHORT = {done:"定案", fix:"待修", wip:"討論", todo:"未開始"};
+var ST_CLS = {done:"b1", fix:"b2", wip:"b3", todo:"b4"};
+var ST_ORDER = ["done","fix","wip","todo"];
 var structMode = false; // 編輯架構模式：只影響當前瀏覽器，不寫資料庫
 var curDim = "m1";
 var editingCell = null;
@@ -650,6 +725,38 @@ function cellEmpty(key){
   if (SEED[key]) return false;
   return true;
 }
+/* 定案時間：已定案的格以文件 ts 為準（定案格無法編輯，ts＝按「儲存並定案」的時間）；
+   預載預設定案格（無文件）用 SEED_LOCK_TS；未定案回傳 0 */
+function cellLockTs(key){
+  if (!cellLocked(key)) return 0;
+  var d = cells[key];
+  if (d && typeof d.ts==="number" && d.ts>0) return d.ts;
+  var dim = key.split("_")[0];
+  return SEED_LOCK_TS[dim] || 1;
+}
+function rowLockTs(dim, rowId){
+  var mx = 0;
+  ROLES.forEach(function(r){ var t = cellLockTs(dim+"_"+rowId+"_"+r[0]); if (t > mx) mx = t; });
+  return mx;
+}
+/* 待修正旗標：資料庫 fix_ 文件優先（on:false＝已取消），沒有文件才用 FIX_SEED */
+function fixDoc(dim, rowId){
+  var k = dim+"_"+rowId;
+  if (fixes[k]) return fixes[k].on===true ? fixes[k] : null;
+  return FIX_SEED[k] || null;
+}
+/* 生效中的待修正：四格都在標記之後重新定案即自動解除（計算，不寫資料庫） */
+function activeFix(dim, rowId){
+  var f = fixDoc(dim, rowId);
+  if (!f) return null;
+  var fts = (typeof f.ts==="number") ? f.ts : 0;
+  var cleared = true;
+  ROLES.forEach(function(r){
+    var t = cellLockTs(dim+"_"+rowId+"_"+r[0]);
+    if (!t || t <= fts) cleared = false;
+  });
+  return cleared ? null : f;
+}
 function rowState(dim, rowId){
   var allEmpty = true, allLock = true;
   ROLES.forEach(function(r){
@@ -657,14 +764,48 @@ function rowState(dim, rowId){
     if (!cellEmpty(k)) allEmpty = false;
     if (!cellLocked(k)) allLock = false;
   });
+  if (activeFix(dim, rowId)) return "fix";
   if (allEmpty) return "todo";
   if (allLock) return "done";
   return "wip";
 }
+/* 隱藏列不計（allRows 預設排除） */
 function dimCount(dim){
-  var list = allRows(dim), d = 0;
-  list.forEach(function(r){ if (rowState(dim, r.id)==="done") d++; });
-  return {done:d, total:list.length};
+  var list = allRows(dim), c = {done:0, fix:0, wip:0, todo:0, total:list.length};
+  list.forEach(function(r){ c[rowState(dim, r.id)]++; });
+  return c;
+}
+/* 台北時區 M/DD */
+function mdOfTs(ts){
+  if (!ts) return "";
+  var f = new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Taipei",month:"2-digit",day:"2-digit"}).formatToParts(new Date(ts));
+  var g = {}; f.forEach(function(p){ g[p.type] = p.value; });
+  return parseInt(g.month,10)+"/"+g.day;
+}
+/* 會議日期字串（例 115-09-16）轉 M/DD */
+function mdOfDate(s){
+  var m = String(s||"").match(/(\d+)\D+(\d{1,2})\D+(\d{1,2})/);
+  if (m) return parseInt(m[2],10)+"/"+("0"+parseInt(m[3],10)).slice(-2);
+  return String(s||"");
+}
+function fixMeetDate(f){
+  var m = f ? findMeet(f.meet) : null;
+  if (m) return mdOfDate(m.date);
+  if (f && f.at){ var a = String(f.at).split(" ")[0].split("/"); if (a.length===2) return parseInt(a[0],10)+"/"+a[1]; }
+  return "";
+}
+function badgeHtml(dim, rowId, st){
+  var txt = ST_NAME[st];
+  if (st==="done"){ var d = mdOfTs(rowLockTs(dim, rowId)); if (d) txt += " "+d; }
+  if (st==="fix"){ var d2 = fixMeetDate(activeFix(dim, rowId)); if (d2) txt += " "+d2; }
+  return '<span class="bg '+ST_CLS[st]+'">'+esc(txt)+'</span>';
+}
+function tabCntText(c){
+  if (!c.total) return "";
+  if (c.done===c.total) return "全部定案";
+  var a = [];
+  ST_ORDER.forEach(function(s){ if (c[s]) a.push(ST_SHORT[s]+c[s]); });
+  return a.join("・");
 }
 function gkey(g){
   return encodeURIComponent(String(g==null?"":g)).replace(/[^A-Za-z0-9]/g,"_");
@@ -803,13 +944,46 @@ function renderOv(){
   document.getElementById("ovwrap").innerHTML = h;
 }
 
+/* ---------- 進度總表 ---------- */
+function renderSum(){
+  var h = '<div class="ovbar sumbar" data-act="sumtoggle">進度總表'
+        + '<span class="tg">點數字跳到該構面並只顯示該狀態　點此'+(sumOpen?"收合":"展開")+'</span></div>';
+  if (sumOpen){
+    var tot = {done:0, fix:0, wip:0, todo:0, total:0};
+    h += '<div class="sumbox"><table class="st"><tr><th>構面</th>';
+    ST_ORDER.forEach(function(s){ h += '<th>'+ST_NAME[s]+'</th>'; });
+    h += '<th>合計</th></tr>';
+    DIMS.forEach(function(d){
+      var c = dimCount(d.id);
+      h += '<tr><td class="nm">'+esc(d.tab)+'</td>';
+      ST_ORDER.forEach(function(s){
+        tot[s] += c[s];
+        if (!c[s]) h += '<td class="z">－</td>';
+        else h += '<td><a data-act="sumgo" data-dim="'+d.id+'" data-st="'+s+'">'+c[s]+'</a></td>';
+      });
+      tot.total += c.total;
+      h += '<td>'+(c.total ? c.total : '<span style="color:#bbb">－</span>')+'</td></tr>';
+    });
+    h += '<tr class="tot"><td class="nm">合計</td>';
+    ST_ORDER.forEach(function(s){ h += tot[s] ? '<td>'+tot[s]+'</td>' : '<td class="z">－</td>'; });
+    h += '<td>'+tot.total+'</td></tr></table></div>';
+  }
+  document.getElementById("sumwrap").innerHTML = h;
+}
+function renderFlt(list){
+  var el = document.getElementById("fltbar");
+  if (!stFilter || curDim==="meet"){ el.innerHTML = ""; return; }
+  el.innerHTML = '<div class="fltbar"><span>目前只顯示：<b>'+esc(ST_NAME[stFilter])+'</b>（'+list.length+' 列）</span>'
+    + '<button data-act="fltclr">顯示全部</button></div>';
+}
+
 /* ---------- 畫面 ---------- */
 function renderTabs(){
   var h = "";
   DIMS.forEach(function(d){
     var c = dimCount(d.id);
     h += '<div class="tab'+(d.id===curDim?" on":"")+'" data-dim="'+d.id+'">'+esc(d.tab)
-       + '<span class="cnt">'+c.done+'/'+c.total+'</span></div>';
+       + '<span class="cnt">'+esc(tabCntText(c))+'</span></div>';
   });
   h += '<div class="tab mt'+(curDim==="meet"?" on":"")+'" data-dim="meet">會議紀錄</div>';
   document.getElementById("tabs").innerHTML = h;
@@ -850,6 +1024,10 @@ function cellHtml(key){
   else { h += "<ol>"; lines.forEach(function(l){ h += "<li>"+esc(l)+"</li>"; }); h += "</ol>"; }
   h += '</div><div class="cfoot">';
   if (lock) h += '<span class="lk">定案</span>';
+  if (lock){
+    var kp = key.split("_");
+    if (!activeFix(kp[0], kp[1])) h += '<button class="fxbtn" data-act="markfix">標記待修正</button>';
+  }
   var presTxt = "";
   Object.keys(pres).forEach(function(w){
     if (w!==who() && pres[w] && pres[w].cell===key && (Date.now()-pres[w].ts)<90000) presTxt = w+" 編輯中…";
@@ -869,7 +1047,7 @@ function renderMeets(){
   list.forEach(function(m){
     var key = "meet_"+m.id;
     var n = cmts.filter(function(c){return c.cell===key;}).length;
-    h += '<div class="mcard" data-cell="'+esc(key)+'">';
+    h += '<div class="mcard" id="mt_'+esc(m.id)+'" data-cell="'+esc(key)+'">';
     h += '<div class="mh"><span>'+esc(m.date)+'</span><span>'+esc(m.title)+'</span></div>';
     h += '<div class="mb"><ol>';
     (m.lines||[]).forEach(function(l){ h += "<li>"+esc(l)+"</li>"; });
@@ -883,11 +1061,13 @@ function renderMeets(){
 function render(){
   renderStructBtn();
   renderOv();
+  renderSum();
   renderTabs();
   renderG24();
   renderMeets();
   var tblbox = document.getElementById("tblbox");
   if (curDim==="meet"){
+    renderFlt([]);
     tblbox.style.display = "none";
     document.getElementById("tbl").innerHTML = "";
     document.getElementById("addrow").innerHTML = "";
@@ -897,18 +1077,23 @@ function render(){
   }
   tblbox.style.display = "";
   var list = allRows(curDim);
-  var h = '<tr class="hdr"><th style="width:58px">項目</th><th style="width:118px">內容</th>';
+  var stMap = {};
+  list.forEach(function(r){ stMap[r.id] = rowState(curDim, r.id); });
+  if (stFilter) list = list.filter(function(r){ return stMap[r.id]===stFilter; });
+  renderFlt(list);
+  var h = '<tr class="hdr"><th style="width:58px">項目</th><th style="width:170px">內容</th>';
   h += '<th class="re">工程師</th><th class="rg">組長</th><th class="rm">主任</th><th class="rd">所長</th></tr>';
   if (!list.length){
-    h += '<tr class="nod"><td colspan="6" style="padding:14px;text-align:center;color:#999">此構面尚無內容列，按下方「新增內容列」開始</td></tr>';
+    h += '<tr class="nod"><td colspan="6" style="padding:14px;text-align:center;color:#999">'
+       + (stFilter ? '目前沒有「'+esc(ST_NAME[stFilter])+'」的列' : '此構面尚無內容列，按下方「新增內容列」開始')
+       + '</td></tr>';
   }
   var spans = {};
   list.forEach(function(r){ var g=r.grp||"自訂"; spans[g]=(spans[g]||0)+1; });
   var printed = {};
   list.forEach(function(r){
     var g = r.grp || "自訂";
-    var st = rowState(curDim, r.id);
-    var dcls = st==="done" ? "d1" : (st==="wip" ? "d2" : "d3");
+    var st = stMap[r.id];
     h += "<tr>";
     if (!printed[g]){
       printed[g] = true;
@@ -922,8 +1107,16 @@ function render(){
       h += '</td>';
     }
     h += '<td class="item"><span class="grpm">'+esc(grpName(curDim,g))+'</span>'
-       + '<span class="dot '+dcls+'"></span>'
+       + '<div class="rst">'+badgeHtml(curDim, r.id, st)+'</div>'
        + '<span class="rn"'+(r.fixed?"":' data-rowedit="'+esc(r.id)+'"')+'>'+esc(r.name)+'</span>';
+    if (st==="fix"){
+      var fx = activeFix(curDim, r.id);
+      var fm = findMeet(fx.meet);
+      h += '<div class="why">'
+         + (fm ? '<u data-act="gomeet" data-meet="'+esc(fm.id)+'">'+esc(fm.title)+'</u>：' : '')
+         + esc(fx.why||"")
+         + '<span class="unfx" data-act="unfix" data-row="'+esc(r.id)+'">取消待修正</span></div>';
+    }
     if (structMode){
       h += '<div class="sctl">'
          + '<button data-act="rowren" data-row="'+esc(r.id)+'">改名</button>'
@@ -1047,6 +1240,21 @@ function openMeetForm(){
   ovlOpen(h);
 }
 
+function openFixForm(dim, rowId){
+  fixTarget = {dim:dim, row:rowId};
+  var h = '<h3>標記待修正　'+esc(rowName(dim, rowId))+'</h3>';
+  h += '<label>依據會議</label><select id="fxm" style="width:100%;font-size:13px;font-family:inherit;border:1px solid #ccc;padding:5px 8px;">';
+  allMeets().forEach(function(m){
+    h += '<option value="'+esc(m.id)+'">'+esc(m.title)+'（'+esc(m.date)+'）</option>';
+  });
+  h += '</select>';
+  h += '<label>要修正什麼</label><textarea id="fxw" style="min-height:100px"></textarea>';
+  h += '<div class="ovsub" style="margin-top:6px">不必先解鎖；修正完把此列四格都「儲存並定案」後會自動變回已定案。</div>';
+  h += '<div class="obtns"><button class="pri" data-act="fixsave">確定</button>'
+     + '<button data-act="ovlclose">取消</button></div>';
+  ovlOpen(h);
+}
+
 /* ---------- Firestore ---------- */
 function fsSet(id, data){
   if (!db){ toast("目前離線，無法儲存"); return Promise.reject("offline"); }
@@ -1149,6 +1357,12 @@ function unlockCell(key){
   }
   fsSet("cell_"+key, d).then(function(){ addLog("解除定案", cName(key)); }).catch(function(){});
 }
+/* 待修正：列層級文件 fix_<dim>_<rowId>；取消＝寫 on:false（不刪文件） */
+function setFix(dim, rowId, on, meetId, why){
+  var d = {t:"fix", dim:dim, row:rowId, on:(on===true), meet:meetId||"", why:why||"",
+           by:who(), at:now(), ts:Date.now()};
+  return fsSet("fix_"+dim+"_"+rowId, d);
+}
 
 /* ---------- 每日自動快照 ---------- */
 function doSnap(){
@@ -1157,7 +1371,7 @@ function doSnap(){
   var ds = tpDay();
   if (snaps[ds]){ cleanSnaps(); return; }
   var payload;
-  try{ payload = JSON.stringify({cells:cells, rows:rows, meets:meets, rowmods:rowmods, grpmods:grpmods}); }
+  try{ payload = JSON.stringify({cells:cells, rows:rows, meets:meets, rowmods:rowmods, grpmods:grpmods, fixes:fixes}); }
   catch(e){ return; }
   try{
     db.collection(COL).doc("snap_"+ds).set({t:"snap", date:ds, ts:Date.now(), data:payload})
@@ -1179,7 +1393,7 @@ function restoreSnap(ds){
   var s = snaps[ds];
   if (!s){ toast("找不到該快照"); return; }
   if (!who()){ toast("請先選擇上方你的名字"); return; }
-  if (!window.confirm("警告：還原 "+dayLabel(ds)+" 的快照，會用該日內容覆蓋現在的職掌格子、自訂列與新增會議紀錄，現有較新的內容將被蓋掉且無法復原。確定要還原嗎？")) return;
+  if (!window.confirm("警告：還原 "+dayLabel(ds)+" 的快照，會用該日內容覆蓋現在的職掌格子、自訂列、新增會議紀錄與待修正標記，現有較新的內容將被蓋掉且無法復原。確定要還原嗎？")) return;
   var o;
   try{ o = JSON.parse(s.data||"{}"); }
   catch(e){ toast("快照資料損毀，無法還原"); return; }
@@ -1201,12 +1415,16 @@ function restoreSnap(ds){
     var gm = o.grpmods[gk];
     if (gm && gm.dim && gm.grp){ fsSet("grpmod_"+gm.dim+"_"+gkey(gm.grp), gm).catch(function(){}); n++; }
   });
+  Object.keys(o.fixes||{}).forEach(function(fk){
+    var fd = o.fixes[fk];
+    if (fd && fd.dim && fd.row){ fsSet("fix_"+fd.dim+"_"+fd.row, fd).catch(function(){}); n++; }
+  });
   addLog("還原備份", dayLabel(ds));
   toast("已送出還原 "+n+" 筆");
 }
 function expBackup(){
   var o = {ver:CODE_VERSION, at:now(), cells:cells, rows:rows, cmts:cmts, logs:logs, meets:meets,
-           rowmods:rowmods, grpmods:grpmods};
+           rowmods:rowmods, grpmods:grpmods, fixes:fixes};
   var txt;
   try{ txt = JSON.stringify(o, null, 1); }
   catch(e){ toast("匯出失敗"); return; }
@@ -1223,7 +1441,7 @@ function expBackup(){
 
 if (db) db.collection(COL).onSnapshot(function(snap){
   cells = {}; rows = {}; cmts = []; logs = []; pres = {}; meets = {}; snaps = {};
-  rowmods = {}; grpmods = {};
+  rowmods = {}; grpmods = {}; fixes = {};
   snap.forEach(function(doc){
     var d = doc.data();
     if (d.t==="cell") cells[d.dim+"_"+d.row+"_"+d.role] = d;
@@ -1235,6 +1453,7 @@ if (db) db.collection(COL).onSnapshot(function(snap){
     else if (d.t==="snap") snaps[d.date] = d;
     else if (d.t==="rowmod") rowmods[d.dim+"_"+d.row] = d;
     else if (d.t==="grpmod") grpmods[d.dim+"|"+d.grp] = d;
+    else if (d.t==="fix") fixes[d.dim+"_"+d.row] = d;
   });
   if (!connected){ connected = true; setStatus("已連線，即時同步", "ok"); }
   render();
@@ -1254,16 +1473,65 @@ document.addEventListener("click", function(ev){
     try{ localStorage.setItem("kz_who", t.getAttribute("data-who")); }catch(e){}
     return;
   }
-  // 頁籤
-  if (t.classList && t.classList.contains("tab")){
-    curDim = t.getAttribute("data-dim"); editingCell = null; panelCell = null; render(); return;
+  // 頁籤（換頁籤一律清除進度總表篩選）
+  var tabEl = (t.closest ? t.closest(".tab") : null);
+  if (tabEl && tabEl.getAttribute("data-dim")){
+    curDim = tabEl.getAttribute("data-dim"); stFilter = null; editingCell = null; panelCell = null; render(); return;
   }
   var act = t.getAttribute && t.getAttribute("data-act");
+  var actEl = t;
   if (!act && t.closest){
     var hd = t.closest("[data-act]");
-    if (hd) act = hd.getAttribute("data-act");
+    if (hd){ act = hd.getAttribute("data-act"); actEl = hd; }
   }
   if (act==="print"){ window.print(); return; }
+  // 進度總表
+  if (act==="sumtoggle"){
+    sumOpen = !sumOpen;
+    try{ localStorage.setItem("kz_sumopen", sumOpen ? "1" : "0"); }catch(e){}
+    renderSum(); return;
+  }
+  if (act==="sumgo"){
+    var sd = actEl.getAttribute("data-dim"), ss = actEl.getAttribute("data-st");
+    if (!sd || !ST_NAME[ss]) return;
+    curDim = sd; stFilter = ss; editingCell = null; panelCell = null; render();
+    var tbs = document.getElementById("tabs");
+    if (tbs && tbs.scrollIntoView) tbs.scrollIntoView({behavior:"smooth", block:"start"});
+    return;
+  }
+  if (act==="fltclr"){ stFilter = null; render(); return; }
+  // 待修正原因的會議名稱 → 會議紀錄頁籤並捲到該會議
+  if (act==="gomeet"){
+    var gm = actEl.getAttribute("data-meet");
+    curDim = "meet"; stFilter = null; editingCell = null; panelCell = null; render();
+    var mc = gm ? document.getElementById("mt_"+gm) : null;
+    if (mc && mc.scrollIntoView) mc.scrollIntoView({behavior:"smooth", block:"start"});
+    return;
+  }
+  if (act==="unfix"){
+    var ur = actEl.getAttribute("data-row");
+    if (!ur) return;
+    if (!who()){ toast("請先選擇上方你的名字"); return; }
+    var un = rowName(curDim, ur);
+    if (!window.confirm("取消「"+un+"」的待修正標記？")) return;
+    var uf = activeFix(curDim, ur) || {};
+    setFix(curDim, ur, false, uf.meet, uf.why)
+      .then(function(){ addLog("取消待修正", un); }).catch(function(){});
+    return;
+  }
+  if (act==="fixsave"){
+    if (!fixTarget) { ovlClose(); return; }
+    if (!who()){ toast("請先選擇上方你的名字"); return; }
+    var fm2 = document.getElementById("fxm"), fw2 = document.getElementById("fxw");
+    var fmv = fm2 ? fm2.value : "", fwv = fw2 ? fw2.value.trim() : "";
+    if (!fmv){ toast("請選擇會議"); return; }
+    if (!fwv){ toast("請填要修正什麼"); return; }
+    var ft2 = fixTarget; fixTarget = null;
+    ovlClose();
+    setFix(ft2.dim, ft2.row, true, fmv, fwv)
+      .then(function(){ addLog("標記待修正", rowName(ft2.dim, ft2.row)); }).catch(function(){});
+    return;
+  }
   if (act==="ovtoggle"){ ovOpen = !ovOpen; renderOv(); return; }
   if (act==="ovnew"){ ovMode = "new"; renderOv(); return; }
   if (act==="ovold"){ ovMode = "old"; renderOv(); return; }
@@ -1332,6 +1600,13 @@ document.addEventListener("click", function(ev){
     }
     return;
   }
+  if (act==="markfix"){
+    if (!td) return;
+    if (!who()){ toast("請先選擇上方你的名字"); return; }
+    var mp = td.getAttribute("data-cell").split("_");
+    openFixForm(mp[0], mp[1]);
+    return;
+  }
   if (act==="unlock"){
     if (!td) return;
     if (!who()){ toast("請先選擇上方你的名字"); return; }
@@ -1397,6 +1672,9 @@ document.getElementById("cinput").addEventListener("keydown", function(e){
 try{
   var w0 = localStorage.getItem("kz_who");
   if (w0){ document.querySelectorAll(".pill").forEach(function(p){ if(p.getAttribute("data-who")===w0) p.classList.add("on"); }); }
+}catch(e){}
+try{
+  if (localStorage.getItem("kz_sumopen")==="0") sumOpen = false;
 }catch(e){}
 render();
 </script>
