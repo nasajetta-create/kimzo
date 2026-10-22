@@ -67,12 +67,20 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
 .hwrap{background:var(--card);border:1.5px solid #666;padding:10px 14px 12px;margin-bottom:10px;}
 .hwrap .htl{font-size:15px;font-weight:bold;color:#1B417D;margin-bottom:10px;line-height:1.6;}
 .hwrap .htl span{font-size:12.5px;font-weight:normal;color:#555;margin-left:10px;}
-.hflow{display:flex;align-items:stretch;flex-wrap:wrap;gap:6px 0;margin-bottom:12px;}
-.hflow .hfc{display:flex;flex-direction:column;align-items:center;}
-.hflow .hfb{border:2px solid #1B417D;color:#1B417D;background:#fff;font-size:14px;font-weight:bold;padding:8px 16px;text-align:center;min-width:96px;}
+.hflow{display:flex;align-items:flex-start;margin:4px 0 10px;}
+.hflow .hfc{flex:1;display:flex;flex-direction:column;align-items:center;min-width:0;}
+.hflow .hfc.wide{flex:1.6;}
+.hflow .hfb{position:relative;border:2px solid #1B417D;color:#1B417D;background:#fff;font-size:14px;font-weight:bold;padding:8px 0;text-align:center;width:100%;box-sizing:border-box;}
 .hflow .hfb.gd{border:2px dashed #b8860b;color:#8a6500;}
-.hflow .hfa{align-self:flex-start;padding:8px 8px 0;font-size:16px;color:#1B417D;font-weight:bold;}
-.hflow .hfs{font-size:11.5px;color:#555;margin-top:5px;line-height:1.6;max-width:520px;}
+.hflow .hfn{font-style:normal;position:absolute;left:-10px;top:-10px;width:20px;height:20px;border-radius:50%;background:#1B417D;color:#fff;font-size:12px;line-height:20px;text-align:center;font-weight:bold;}
+.hflow .hfa{width:30px;flex:none;text-align:center;padding-top:8px;font-size:16px;color:#1B417D;font-weight:bold;}
+.hflow .hfk{font-size:12.5px;color:#444;margin-top:5px;text-align:center;}
+.hflow .hfk.na{color:#999;}
+.hflow .hsub{display:flex;gap:6px;margin-top:6px;width:100%;}
+.hflow .hsb{flex:1;border:1.5px solid #8aa0bf;background:#f7f9fc;color:#1B417D;font-size:12.5px;text-align:center;padding:4px 0;line-height:1.5;}
+.hflow .hsb small{display:block;color:#555;font-size:11.5px;}
+.hseven{background:#f2f2f2;border:1px solid #ccc;padding:6px 10px;font-size:12px;color:#555;margin-bottom:12px;line-height:1.6;}
+@media (max-width:760px){.hflow{flex-wrap:wrap;gap:12px 0;}.hflow .hfc,.hflow .hfc.wide{flex:0 0 calc(50% - 30px);}}
 .htbw{overflow-x:auto;}
 table.htb{min-width:760px;font-size:13px;}
 .htb td{padding:6px 8px;vertical-align:middle;line-height:1.6;}
@@ -303,7 +311,7 @@ td.dim .sctl button{background:#fff;}
 <div class="wrap">
 
 <div class="topbar">
-  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K1022-01</span>
+  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K1022-02</span>
   <span class="pill" data-who="艋舺良">艋舺良</span>
   <span class="pill" data-who="沈協理">沈協理</span>
   <span class="tbtn" id="stbtn" data-act="struct">編輯架構</span>
@@ -360,11 +368,12 @@ td.dim .sctl button{background:#fff;}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-/* ================= KIMZO-WORK 職掌共編 K1022-01 ================= */
+/* ================= KIMZO-WORK 職掌共編 K1022-02 ================= */
+/* K1022-02：黃總流程軸改五格等距＋各格條目編號、工程執行分進場前整備／施工中管理、七步驟移灰條；請購改投標請購；表格補合約訂定列 */
 /* K1022-01：黃總流程軸（新頁籤＋各構面對照灰區）、新增 4 列、4-1-4 與 4-2-3 預填；K1008-01 為前一版 */
 /* K1008-01：進度總表（點數字篩選）、頁籤狀態文字、列狀態標籤（已定案／待修正／討論中／未開始）、
    標記待修正（fix_ 文件，四格重新定案後自動解除）、狀態說明列；K0918-05 為前一版 */
-var CODE_VERSION = "K1022-01";
+var CODE_VERSION = "K1022-02";
 var firebaseConfig = {
   apiKey: "AIzaSyD8UQE3Y2AyWo3-2KXEN0xJeGswE86bebI",
   authDomain: "g95-work-management.firebaseapp.com",
@@ -635,12 +644,12 @@ var HUANG_FLOW = ["投標請購","採購發包","合約訂定","工程執行","�
 var HUANG_EXEC = ["圖說送審核認","備料","放樣","進場","施工","品質查驗","施工異常錯誤紀錄"]; // 工程執行下的七步
 var HUANG = [
  // {no, stage, text, dim, row, st, note}  st: "ok"=✓現行已有, "new"=●建議新增, "wait"=△待分界
- {no:"B1", stage:"請購", text:"分項工程計劃（範圍）", dim:"m1", row:"122", st:"ok", note:"1-2-2 請購：位置／數量／預算差異"},
- {no:"B2", stage:"請購", text:"預算面圖說比對及標示", dim:"m1", row:"122", st:"ok", note:"1-2-2 請購：位置／數量／預算差異"},
- {no:"B3", stage:"請購", text:"數量計算之能力", dim:"m1", row:"1221", st:"new", note:"新列 1-2-2a 數量計算"},
- {no:"B4", stage:"請購", text:"施工規範、建材設備之了解", dim:"m1", row:"122", st:"ok", note:"1-2-2 請購：施工規範／特殊規範"},
- {no:"B5", stage:"請購", text:"單項工程進度進出場時間說明", dim:"m1", row:"122", st:"ok", note:"1-2-2 請購：進場進度表"},
- {no:"B6", stage:"請購", text:"每工程人力預估表", dim:"m1", row:"1222", st:"new", note:"新列 1-2-2b 人力預估表"},
+ {no:"B1", stage:"投標請購", text:"分項工程計劃（範圍）", dim:"m1", row:"122", st:"ok", note:"1-2-2 請購：位置／數量／預算差異"},
+ {no:"B2", stage:"投標請購", text:"預算面圖說比對及標示", dim:"m1", row:"122", st:"ok", note:"1-2-2 請購：位置／數量／預算差異"},
+ {no:"B3", stage:"投標請購", text:"數量計算之能力", dim:"m1", row:"1221", st:"new", note:"新列 1-2-2a 數量計算"},
+ {no:"B4", stage:"投標請購", text:"施工規範、建材設備之了解", dim:"m1", row:"122", st:"ok", note:"1-2-2 請購：施工規範／特殊規範"},
+ {no:"B5", stage:"投標請購", text:"單項工程進度進出場時間說明", dim:"m1", row:"122", st:"ok", note:"1-2-2 請購：進場進度表"},
+ {no:"B6", stage:"投標請購", text:"每工程人力預估表", dim:"m1", row:"1222", st:"new", note:"新列 1-2-2b 人力預估表"},
  {no:"C1", stage:"採購發包", text:"新工項、新廠商需建立訪廠機制（業界風評、財務能力、現場計劃及品質能力、售後服務）", dim:"m1", row:"1241", st:"new", note:"新列 1-2-4a 訪廠評估"},
  {no:"C2", stage:"採購發包", text:"施工規劃範圍、工程進度需求及人力需求表說明並作成會議紀錄", dim:"m1", row:"124", st:"ok", note:"1-2-4 採發：廠商訪談會議"},
  {no:"C3", stage:"採購發包", text:"議比價：非最低價得標，需說明訪場與評比採購說明；評估後得標廠商非最低價（不超出預算或預算節餘％）可採非最低價廠商", dim:"m4", row:"415", st:"new", note:"新列 4-1-5 非最低價發包核准"},
@@ -1144,23 +1153,35 @@ function renderHuang(){
   if (curDim!=="huang"){ box.innerHTML = ""; return; }
   var h = '<div class="hwrap">';
   h += '<div class="htl">黃總流程軸<span>2026-10-21 黃總手稿三頁　供第四次檢討會議（10/23）對照</span></div>';
-  // 流程總圖
+  // 流程總圖：五格等距，每格下方標條目編號；工程執行分兩段；七步驟放灰條當原文對照
+  var FK = {"投標請購":"B1～B6","採購發包":"C1～C4","合約訂定":"","驗收計價":"F（黃總請大家想）"};
   h += '<div class="hflow">';
   HUANG_FLOW.forEach(function(f, i){
     if (i>0) h += '<div class="hfa">→</div>';
-    h += '<div class="hfc"><div class="hfb'+(f==="驗收計價"?" gd":"")+'">'+esc(f)+'</div>';
-    if (f==="工程執行"){
-      h += '<div class="hfs">'+HUANG_EXEC.map(function(x,j){ return (j+1)+" "+esc(x); }).join(" → ")+'</div>';
+    var ex = (f==="工程執行");
+    h += '<div class="hfc'+(ex?" wide":"")+'"><div class="hfb'+(f==="驗收計價"?" gd":"")+'"><i class="hfn">'+(i+1)+'</i>'+esc(f)+'</div>';
+    if (ex){
+      h += '<div class="hsub"><div class="hsb">進場前整備<small>D1～D6</small></div><div class="hsb">施工中管理<small>E1～E5</small></div></div>';
+    } else if (FK[f]){
+      h += '<div class="hfk">'+esc(FK[f])+'</div>';
+    } else {
+      h += '<div class="hfk na">黃總未列條目</div>';
     }
     h += '</div>';
   });
   h += '</div>';
+  h += '<div class="hseven">黃總手稿・工程執行七步驟：'+HUANG_EXEC.map(function(x,j){ return (j+1)+" "+esc(x); }).join(" → ")+'</div>';
   // 桌機表格（列印同此）
   var spans = {};
   HUANG.forEach(function(x){ spans[x.stage] = (spans[x.stage]||0)+1; });
   var printed = {};
   h += '<div class="hdesk htbw"><table class="htb"><tr><th>階段</th><th>編號</th><th>黃總條目</th><th>落點</th><th>狀態</th><th>留言</th></tr>';
+  var ctDone = false;
   HUANG.forEach(function(x){
+    if (!ctDone && x.stage.indexOf("工程執行")===0){
+      ctDone = true;
+      h += '<tr><td class="hs">合約訂定</td><td class="hn">－</td><td colspan="4" style="color:#999">黃總未列條目</td></tr>';
+    }
     var key = "huang_"+x.no;
     var n = cmts.filter(function(c){ return c.cell===key; }).length;
     h += '<tr>';
@@ -1177,7 +1198,12 @@ function renderHuang(){
   h += '</table></div>';
   // 手機卡片
   h += '<div class="hmob">';
+  var ctDoneM = false;
   HUANG.forEach(function(x){
+    if (!ctDoneM && x.stage.indexOf("工程執行")===0){
+      ctDoneM = true;
+      h += '<div class="hcard"><div class="hch">合約訂定</div><div class="hcl" style="color:#999">黃總未列條目</div></div>';
+    }
     h += '<div class="hcard"><div class="hch">'+esc(x.no)+'　'+esc(x.text)+'　'+huangSym(x.st)+'</div>'
        + '<div class="hcl">'+esc(x.stage)+'　→ <span class="hgo" data-act="hgo" data-dim="'+esc(x.dim)+'" data-row="'+esc(x.row)+'" style="color:#1565c0;text-decoration:underline;cursor:pointer">'+esc(x.note)+'</span></div></div>';
   });
