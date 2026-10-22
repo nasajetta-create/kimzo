@@ -61,6 +61,37 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
 .g24 .bd .l24 b{color:#222;}
 .g24 .bd .l24 .wh{color:#777;font-size:11.5px;}
 
+/* ---------- 黃總流程軸 ---------- */
+.hx-sym{font-weight:bold;}
+.hx-ok{color:#b8860b;} .hx-new{color:#1B417D;} .hx-wait{color:#c62828;}
+.hwrap{background:var(--card);border:1.5px solid #666;padding:10px 14px 12px;margin-bottom:10px;}
+.hwrap .htl{font-size:15px;font-weight:bold;color:#1B417D;margin-bottom:10px;line-height:1.6;}
+.hwrap .htl span{font-size:12.5px;font-weight:normal;color:#555;margin-left:10px;}
+.hflow{display:flex;align-items:stretch;flex-wrap:wrap;gap:6px 0;margin-bottom:12px;}
+.hflow .hfc{display:flex;flex-direction:column;align-items:center;}
+.hflow .hfb{border:2px solid #1B417D;color:#1B417D;background:#fff;font-size:14px;font-weight:bold;padding:8px 16px;text-align:center;min-width:96px;}
+.hflow .hfb.gd{border:2px dashed #b8860b;color:#8a6500;}
+.hflow .hfa{align-self:flex-start;padding:8px 8px 0;font-size:16px;color:#1B417D;font-weight:bold;}
+.hflow .hfs{font-size:11.5px;color:#555;margin-top:5px;line-height:1.6;max-width:520px;}
+.htbw{overflow-x:auto;}
+table.htb{min-width:760px;font-size:13px;}
+.htb td{padding:6px 8px;vertical-align:middle;line-height:1.6;}
+.htb td.hs{background:#f0f4f8;font-weight:bold;width:120px;text-align:center;}
+.htb td.hn{width:48px;text-align:center;font-weight:bold;}
+.htb td.hk{width:44px;text-align:center;font-size:15px;}
+.htb td.hc{width:64px;text-align:center;}
+.htb .hgo{color:#1565c0;text-decoration:underline;cursor:pointer;}
+.htb .hgo:hover{color:#0d3c78;}
+.htb .cbtn{border:1px solid #bbb;background:#f5f5f5;color:#555;font-size:11px;padding:1px 8px;cursor:pointer;}
+.htb .cbtn.has{border-color:var(--accent);color:var(--accent);font-weight:bold;}
+.hleg{font-size:12.5px;color:#555;margin-top:8px;}
+.hmob{display:none;}
+.hcard{border:1px solid #bbb;background:#fff;padding:7px 10px;margin-bottom:6px;font-size:13px;line-height:1.6;}
+.hcard .hch{font-weight:bold;}
+.hcard .hcl{font-size:12px;color:#555;}
+#tbl tr.hflash td.item,#tbl tr.hflash td.duty,#tbl tr.hflash .cellin{background:#fff3b0 !important;}
+#tbl td.item,#tbl td.duty,#tbl .cellin{transition:background-color .35s;}
+
 /* ---------- 頁籤與表格 ---------- */
 .tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:0;}
 .tab{border:1px solid #999;border-bottom:none;padding:6px 14px;font-size:13.5px;background:#e4e7ea;cursor:pointer;user-select:none;}
@@ -230,6 +261,10 @@ td.dim .sctl button{background:#fff;}
   .fltbar{border:1.5px solid #666;margin-bottom:8px;}
   .col{flex:1 1 100%;border-right:0;border-bottom:1px solid rgba(0,0,0,.12);}
   .col:last-child{border-bottom:0;}
+  .hdesk{display:none;}
+  .hmob{display:block;}
+  .hwrap{padding:8px;}
+  .hflow .hfb{min-width:0;padding:6px 8px;font-size:13px;}
 }
 
 /* ---------- 列印 ---------- */
@@ -238,7 +273,7 @@ td.dim .sctl button{background:#fff;}
   html,body{background:#fff;}
   .wrap{max-width:none;padding:0;}
   .topbar .pill,.topbar .tbtn,#status,.tabs,.ovbar,.ovbox,#g24box,
-  .cpanel,.logsec,.bksec,.addrow,.foot,.toast,.ovl,.mtop,
+  .cpanel,.logsec,.bksec,.addrow,.foot,.toast,.ovl,.mtop,#hxbox,.hmob,.htb .cbtn,
   .sctl,.hidsec,#hidsec{display:none !important;}
   .sumbar .tg,.fltbar button,.cfoot .fxbtn,td.item .why .unfx{display:none !important;}
   #sumwrap .ovbar{display:flex !important;background:#fff;color:#000;border:1px solid #000;border-bottom:none;padding:4px 8px;margin-bottom:0;}
@@ -258,6 +293,9 @@ td.dim .sctl button{background:#fff;}
   tr{page-break-inside:avoid;}
   .mcard{border:1px solid #000;page-break-inside:avoid;}
   .mcard .mf .cbtn{display:none !important;}
+  .hdesk{display:block !important;}
+  .hwrap{border:1px solid #000;}
+  .htb .hgo{color:#000;text-decoration:none;}
 }
 </style>
 </head>
@@ -265,7 +303,7 @@ td.dim .sctl button{background:#fff;}
 <div class="wrap">
 
 <div class="topbar">
-  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K1008-01</span>
+  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K1022-01</span>
   <span class="pill" data-who="艋舺良">艋舺良</span>
   <span class="pill" data-who="沈協理">沈協理</span>
   <span class="tbtn" id="stbtn" data-act="struct">編輯架構</span>
@@ -284,9 +322,11 @@ td.dim .sctl button{background:#fff;}
 
 <div class="tabs" id="tabs"></div>
 <div id="g24box"></div>
+<div id="hxbox"></div>
 <div id="fltbar"></div>
 <div class="tblbox" id="tblbox"><table id="tbl"></table></div>
 <div id="meetbox"></div>
+<div id="huangbox"></div>
 <div id="hidsec"></div>
 <div class="addrow" id="addrow"></div>
 
@@ -305,7 +345,7 @@ td.dim .sctl button{background:#fff;}
 <div class="bksec" id="bksec"></div>
 
 <div class="foot">
-規則：基礎＝2024版；第一輪＝職掌，不寫評分基準。每構面上方灰色區塊＝2024 原始資料的項目與內容（唯讀對照），下方＝更新後對照表。構面1、2 已預載並預設定案，需先解鎖才能修改；構面3～6 已預載項目列，格子點開即可填寫。<br>
+規則：基礎＝2024版；第一輪＝職掌，不寫評分基準。每構面上方灰色區塊＝2024 原始資料的項目與內容（唯讀對照），下方＝更新後對照表。構面1、2 已預載並預設定案，需先解鎖才能修改；構面3～6 已預載項目列，格子點開即可填寫。黃總流程軸頁籤＝10/21 黃總手稿 22 條與六構面落點對照；各構面頁灰區第二段為該構面相關條目。<br>
 點格子編輯、按「註」留言；點格底的修改者時間可看該格的歷史版本。每日自動保存一次快照，可於下方備份區還原或匯出。<br>
 列狀態四種：已定案＝四職務都定案（標籤日期＝最後定案日）；待修正＝定案後會議有新指示（標籤日期＝會議日）；討論中＝有內容、未全部定案；未開始＝格子全空。上方進度總表點數字可跳到該構面並只顯示該狀態。<br>
 定案格可直接按「標記待修正」（不必先解鎖），選會議並填要修正什麼；修正完把該列四格都「儲存並定案」後，自動變回已定案；也可按原因後的「取消待修正」手動取消。<br>
@@ -320,10 +360,11 @@ td.dim .sctl button{background:#fff;}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
-/* ================= KIMZO-WORK 職掌共編 K1008-01 ================= */
+/* ================= KIMZO-WORK 職掌共編 K1022-01 ================= */
+/* K1022-01：黃總流程軸（新頁籤＋各構面對照灰區）、新增 4 列、4-1-4 與 4-2-3 預填；K1008-01 為前一版 */
 /* K1008-01：進度總表（點數字篩選）、頁籤狀態文字、列狀態標籤（已定案／待修正／討論中／未開始）、
    標記待修正（fix_ 文件，四格重新定案後自動解除）、狀態說明列；K0918-05 為前一版 */
-var CODE_VERSION = "K1008-01";
+var CODE_VERSION = "K1022-01";
 var firebaseConfig = {
   apiKey: "AIzaSyD8UQE3Y2AyWo3-2KXEN0xJeGswE86bebI",
   authDomain: "g95-work-management.firebaseapp.com",
@@ -356,8 +397,11 @@ var FIXED_ROWS = {
     {id:"112", grp:"1-1 工事進度", name:"2 階段進度 里程碑"},
     {id:"121", grp:"1-2 工務作業進度", name:"1 分包計劃"},
     {id:"122", grp:"1-2 工務作業進度", name:"2 請購提送"},
+    {id:"1221", grp:"1-2 工務作業進度", name:"2a 數量計算"},
+    {id:"1222", grp:"1-2 工務作業進度", name:"2b 人力預估表"},
     {id:"123", grp:"1-2 工務作業進度", name:"3 施工圖"},
     {id:"124", grp:"1-2 工務作業進度", name:"4 採發"},
+    {id:"1241", grp:"1-2 工務作業進度", name:"4a 訪廠評估"},
     {id:"125", grp:"1-2 工務作業進度", name:"5 單項計畫"}
   ],
   m2:[
@@ -386,6 +430,7 @@ var FIXED_ROWS = {
     {id:"412", grp:"4-1 合約管理", name:"2 變更單K項"},
     {id:"413", grp:"4-1 合約管理", name:"3 變更單J項"},
     {id:"414", grp:"4-1 合約管理", name:"4 估驗計價"},
+    {id:"415", grp:"4-1 合約管理", name:"5 非最低價發包核准"},
     {id:"421", grp:"4-2 點工移工管理", name:"1 點工計畫"},
     {id:"422", grp:"4-2 點工移工管理", name:"2 派工執行"},
     {id:"423", grp:"4-2 點工移工管理", name:"3 代雇代扣"},
@@ -458,8 +503,30 @@ var SEED = {
   "m2_215_e":["提出新的勞安構想且獲採用","對外單位獲獎（路跑、競賽等）"],
   "m2_215_g":["提出新的勞安構想且獲採用","對外單位獲獎（路跑、競賽等）"],
   "m2_215_m":["提出新的勞安構想且獲採用","對外單位獲獎（路跑、競賽等）"],
-  "m2_215_d":["提出新的勞安構想且獲採用","對外單位獲獎（路跑、競賽等）"]
+  "m2_215_d":["提出新的勞安構想且獲採用","對外單位獲獎（路跑、競賽等）"],
+  /* K1022-01 黃總流程軸預填（討論中，不預設定案；空白格不列） */
+  "m1_1221_e":["依圖說計算請購數量","數量計算表附請購單"],
+  "m1_1221_g":["數量複核","差異註記"],
+  "m1_1221_m":["數量計算表抽查"],
+  "m1_1222_e":["編製該工項人力預估表"],
+  "m1_1222_g":["人力預估表複核"],
+  "m1_1222_m":["人力預估與進度需求一致性確認"],
+  "m1_1241_g":["訪廠紀錄（業界風評、現場計劃及品質能力、售後服務）"],
+  "m1_1241_m":["訪廠評估意見","財務能力資料確認"],
+  "m1_1241_d":["新廠商採用核定"],
+  "m4_415_m":["非最低價評比採購說明編製","評分表編製"],
+  "m4_415_d":["評比說明審查","送總經理核准"],
+  "m4_414_e":["分層數量表完整標註計價範圍","現場數量丈量與計價單比對","簽收單核實（簽名、計價數量吻合）","各項材料檢試驗報告附齊"],
+  "m4_414_g":["數量複核與差異註記","施作完成度確認"],
+  "m4_414_m":["請款金額與合約、變更單核對","發票開立項目數量金額核對","代扣款次月扣款確實","保留款計算"],
+  "m4_414_d":["爭議數量裁決","核定送公司","業主計價協商與請款時程掌握"],
+  "m4_423_e":["代雇工作業內容紀錄詳實（人數、工項、時數、地點）"],
+  "m4_423_g":["代雇工紀錄核對"],
+  "m4_423_m":["代扣金額審核","廠商簽認確認"],
+  "m4_423_d":["代扣款核定"]
 };
+/* 構面1、2 無資料庫文件時預設定案；以下列為例外（K1022-01 新增列，預設未定案＝討論中） */
+var SEED_OPEN_ROWS = {"m1_1221":1, "m1_1222":1, "m1_1241":1};
 
 /* ---------- 預載定案日：預載格（無資料庫文件）定案時間，構面1＝9/07、構面2＝9/08 ---------- */
 var SEED_LOCK_TS = {
@@ -563,10 +630,40 @@ var DATA24_ITEMS = {
  ]}
 };
 
+/* ---------- 黃總流程軸（2026-10-21 黃總手稿三頁，供第四次檢討會議 10/23 對照） ---------- */
+var HUANG_FLOW = ["投標請購","採購發包","合約訂定","工程執行","驗收計價"];
+var HUANG_EXEC = ["圖說送審核認","備料","放樣","進場","施工","品質查驗","施工異常錯誤紀錄"]; // 工程執行下的七步
+var HUANG = [
+ // {no, stage, text, dim, row, st, note}  st: "ok"=✓現行已有, "new"=●建議新增, "wait"=△待分界
+ {no:"B1", stage:"請購", text:"分項工程計劃（範圍）", dim:"m1", row:"122", st:"ok", note:"1-2-2 請購：位置／數量／預算差異"},
+ {no:"B2", stage:"請購", text:"預算面圖說比對及標示", dim:"m1", row:"122", st:"ok", note:"1-2-2 請購：位置／數量／預算差異"},
+ {no:"B3", stage:"請購", text:"數量計算之能力", dim:"m1", row:"1221", st:"new", note:"新列 1-2-2a 數量計算"},
+ {no:"B4", stage:"請購", text:"施工規範、建材設備之了解", dim:"m1", row:"122", st:"ok", note:"1-2-2 請購：施工規範／特殊規範"},
+ {no:"B5", stage:"請購", text:"單項工程進度進出場時間說明", dim:"m1", row:"122", st:"ok", note:"1-2-2 請購：進場進度表"},
+ {no:"B6", stage:"請購", text:"每工程人力預估表", dim:"m1", row:"1222", st:"new", note:"新列 1-2-2b 人力預估表"},
+ {no:"C1", stage:"採購發包", text:"新工項、新廠商需建立訪廠機制（業界風評、財務能力、現場計劃及品質能力、售後服務）", dim:"m1", row:"1241", st:"new", note:"新列 1-2-4a 訪廠評估"},
+ {no:"C2", stage:"採購發包", text:"施工規劃範圍、工程進度需求及人力需求表說明並作成會議紀錄", dim:"m1", row:"124", st:"ok", note:"1-2-4 採發：廠商訪談會議"},
+ {no:"C3", stage:"採購發包", text:"議比價：非最低價得標，需說明訪場與評比採購說明；評估後得標廠商非最低價（不超出預算或預算節餘％）可採非最低價廠商", dim:"m4", row:"415", st:"new", note:"新列 4-1-5 非最低價發包核准"},
+ {no:"C4", stage:"採購發包", text:"非最低價承包情況，需附評比採購說明及評分表送總經理核准", dim:"m4", row:"415", st:"new", note:"新列 4-1-5 非最低價發包核准"},
+ {no:"D1", stage:"工程執行 進場前整備", text:"進場前協調會議", dim:"m3", row:"311", st:"ok", note:"3-1-1 作業基準佈設"},
+ {no:"D2", stage:"工程執行 進場前整備", text:"施工計劃審核能力", dim:"m1", row:"125", st:"wait", note:"與 1-2-5 單項計畫重疊：進度在構面1、審核品質在構面3"},
+ {no:"D3", stage:"工程執行 進場前整備", text:"單項工程施工圖審核能力", dim:"m1", row:"125", st:"wait", note:"同上分界原則"},
+ {no:"D4", stage:"工程執行 進場前整備", text:"施工動線安排協調能力", dim:"m3", row:"312", st:"ok", note:"3-1-2 作業程序與界面"},
+ {no:"D5", stage:"工程執行 進場前整備", text:"施工作業整理佈設", dim:"m3", row:"313", st:"ok", note:"3-1-3 場域整理整頓"},
+ {no:"D6", stage:"工程執行 進場前整備", text:"廠驗作業落實", dim:"m3", row:"321", st:"wait", note:"1-2-5 材料送審只管進度；廠驗落實建議放 3-2 工事品質"},
+ {no:"E1", stage:"工程執行 施工中管理", text:"施工停檢點品質檢核作業是否確實（各單項工程施工查核表內容）", dim:"m3", row:"322", st:"ok", note:"3-2-2 施工品質把關"},
+ {no:"E2", stage:"工程執行 施工中管理", text:"工程改善的追蹤及記錄", dim:"m3", row:"323", st:"ok", note:"3-2-3 缺失改善複驗"},
+ {no:"E3", stage:"工程執行 施工中管理", text:"工程界面衝突錯誤管理", dim:"m3", row:"312", st:"ok", note:"3-1-2 作業程序與界面"},
+ {no:"E4", stage:"工程執行 施工中管理", text:"整理整頓管理作業（環境、物料、用水、用電）", dim:"m3", row:"313", st:"ok", note:"3-1-3 場域整理整頓"},
+ {no:"E5", stage:"工程執行 施工中管理", text:"代雇工作業內容詳實清楚", dim:"m4", row:"423", st:"ok", note:"4-2-3 代雇代扣，格子已預填候選內容"},
+ {no:"F",  stage:"驗收計價", text:"驗收計價（黃總請大家想）", dim:"m4", row:"414", st:"ok", note:"4-1-4 估驗計價，格子已預填候選內容（含 2024 六條）"}
+];
+var HUANG_ST = {ok:{sym:"✓", c:"#b8860b", nm:"現行已有"}, "new":{sym:"●", c:"#1B417D", nm:"建議新增"}, wait:{sym:"△", c:"#c62828", nm:"待分界"}};
+
 /* ---------- 六構面架構總覽 ---------- */
 /* 更新版＝依現行架構（FIXED_ROWS＋自訂列＋rowmod／grpmod）即時產生 */
 var FW_NEW_SUB = "基礎＝2024版　｜　構面1、2 待會議檢討；構面3～6 檢討中　｜　●＝2024 版沒有的項目";
-var FW_NEW_FOOT = "與 8/26 版差異：1-2 新增分包計劃並依流程重排；構面2 改為缺失改善等五項（含新增加分項）；構面6 維持原內容待檢討。";
+var FW_NEW_FOOT = "與 8/26 版差異：1-2 新增分包計劃並依流程重排；構面2 改為缺失改善等五項（含新增加分項）；構面6 維持原內容待檢討；10/22 依黃總流程軸新增 4 列（●）並預填 4-1-4、4-2-3";
 var FW_META = {
   m1:{c:"c1", h:"1 進度管理",     tag:"待會議檢討"},
   m2:{c:"c2", h:"2 安全衛生管理", tag:"待會議檢討"},
@@ -577,10 +674,10 @@ var FW_META = {
 };
 /* ●＝2024 版沒有的項目，以 FIXED_ROWS 的 row id 為準；自訂新增列不帶點 */
 var DOT_IDS = {
-  m1:["112","121","125"],
+  m1:["112","121","1221","1222","1241","125"],
   m2:["215"],
   m3:["321","323","324","332","333"],
-  m4:["412","413","422"],
+  m4:["412","413","415","422"],
   m5:["511","521","522","523"],
   m6:["615","616"]
 };
@@ -674,6 +771,7 @@ var editingCell = null;
 var panelCell = null;
 var connected = false;
 var g24open = false;
+var hxOpen = false;      // 各構面「黃總流程軸對照」灰區展開狀態（獨立於 g24open）
 var ovOpen = false;
 var ovMode = "new";
 var snapDone = false;
@@ -717,7 +815,8 @@ function cellLines(key){
 function cellLocked(key){
   var d = cells[key];
   if (d) return !!d.locked;
-  var dim = key.split("_")[0];
+  var kp = key.split("_"), dim = kp[0];
+  if (SEED_OPEN_ROWS[dim+"_"+kp[1]]) return false;
   return (dim==="m1" || dim==="m2");
 }
 function cellEmpty(key){
@@ -893,6 +992,10 @@ function cName(key){
     var m = findMeet(key.slice(5));
     return "會議紀錄 " + (m ? (m.date+" "+m.title) : key.slice(5));
   }
+  if (key.indexOf("huang_")===0){
+    var hn = key.slice(6), hi = huangItem(hn);
+    return "黃總 " + hn + (hi ? " "+hi.text : "");
+  }
   var p = key.split("_"); // dim,row,role
   var rn = ""; ROLES.forEach(function(r){ if(r[0]===p[2]) rn=r[1]; });
   return rowName(p[0],p[1]) + " / " + rn;
@@ -946,6 +1049,7 @@ function renderOv(){
 
 /* ---------- 進度總表 ---------- */
 function renderSum(){
+  if (curDim==="huang"){ document.getElementById("sumwrap").innerHTML = ""; return; }
   var h = '<div class="ovbar sumbar" data-act="sumtoggle">進度總表'
         + '<span class="tg">點數字跳到該構面並只顯示該狀態　點此'+(sumOpen?"收合":"展開")+'</span></div>';
   if (sumOpen){
@@ -972,7 +1076,7 @@ function renderSum(){
 }
 function renderFlt(list){
   var el = document.getElementById("fltbar");
-  if (!stFilter || curDim==="meet"){ el.innerHTML = ""; return; }
+  if (!stFilter || curDim==="meet" || curDim==="huang"){ el.innerHTML = ""; return; }
   el.innerHTML = '<div class="fltbar"><span>目前只顯示：<b>'+esc(ST_NAME[stFilter])+'</b>（'+list.length+' 列）</span>'
     + '<button data-act="fltclr">顯示全部</button></div>';
 }
@@ -985,13 +1089,14 @@ function renderTabs(){
     h += '<div class="tab'+(d.id===curDim?" on":"")+'" data-dim="'+d.id+'">'+esc(d.tab)
        + '<span class="cnt">'+esc(tabCntText(c))+'</span></div>';
   });
+  h += '<div class="tab mt'+(curDim==="huang"?" on":"")+'" data-dim="huang">黃總流程軸</div>';
   h += '<div class="tab mt'+(curDim==="meet"?" on":"")+'" data-dim="meet">會議紀錄</div>';
   document.getElementById("tabs").innerHTML = h;
 }
 function renderG24(){
   var d = DATA24_ITEMS[curDim];
   var box = document.getElementById("g24box");
-  if (!d || curDim==="meet"){ box.innerHTML = ""; return; }
+  if (!d || curDim==="meet" || curDim==="huang"){ box.innerHTML = ""; return; }
   var h = '<div class="g24"><div class="hd" data-act="g24toggle">2024 原始資料　'+esc(d.name)
         + '<span class="tg">項目與內容　唯讀　點此'+(g24open?"收合":"展開")+'</span></div>';
   if (g24open){
@@ -1003,6 +1108,86 @@ function renderG24(){
     h += '</div>';
   }
   h += "</div>";
+  box.innerHTML = h;
+}
+/* ---------- 黃總流程軸 ---------- */
+function huangItem(no){
+  for (var i=0;i<HUANG.length;i++) if (HUANG[i].no===no) return HUANG[i];
+  return null;
+}
+function huangSym(st){
+  var s = HUANG_ST[st];
+  return s ? '<span class="hx-sym hx-'+st+'">'+s.sym+'</span>' : '';
+}
+/* 各構面頁：2024 灰區下方的「黃總流程軸對照」灰區（只有該構面有條目才顯示） */
+function renderHx(){
+  var box = document.getElementById("hxbox");
+  var list = HUANG.filter(function(x){ return x.dim===curDim; });
+  if (!list.length || curDim==="meet" || curDim==="huang"){ box.innerHTML = ""; return; }
+  var stg = [];
+  list.forEach(function(x){ if (stg.indexOf(x.stage)<0) stg.push(x.stage); });
+  var h = '<div class="g24"><div class="hd" data-act="hxtoggle">黃總流程軸對照　'+esc(stg.join("、"))
+        + '<span class="tg">唯讀　點此'+(hxOpen?"收合":"展開")+'</span></div>';
+  if (hxOpen){
+    h += '<div class="bd">';
+    list.forEach(function(x){
+      h += '<div class="l24"><b>'+esc(x.no)+'</b>　'+esc(x.text)+'　→ '+esc(x.note)+'　'+huangSym(x.st)+'</div>';
+    });
+    h += '</div>';
+  }
+  h += '</div>';
+  box.innerHTML = h;
+}
+/* 黃總流程軸頁籤 */
+function renderHuang(){
+  var box = document.getElementById("huangbox");
+  if (curDim!=="huang"){ box.innerHTML = ""; return; }
+  var h = '<div class="hwrap">';
+  h += '<div class="htl">黃總流程軸<span>2026-10-21 黃總手稿三頁　供第四次檢討會議（10/23）對照</span></div>';
+  // 流程總圖
+  h += '<div class="hflow">';
+  HUANG_FLOW.forEach(function(f, i){
+    if (i>0) h += '<div class="hfa">→</div>';
+    h += '<div class="hfc"><div class="hfb'+(f==="驗收計價"?" gd":"")+'">'+esc(f)+'</div>';
+    if (f==="工程執行"){
+      h += '<div class="hfs">'+HUANG_EXEC.map(function(x,j){ return (j+1)+" "+esc(x); }).join(" → ")+'</div>';
+    }
+    h += '</div>';
+  });
+  h += '</div>';
+  // 桌機表格（列印同此）
+  var spans = {};
+  HUANG.forEach(function(x){ spans[x.stage] = (spans[x.stage]||0)+1; });
+  var printed = {};
+  h += '<div class="hdesk htbw"><table class="htb"><tr><th>階段</th><th>編號</th><th>黃總條目</th><th>落點</th><th>狀態</th><th>留言</th></tr>';
+  HUANG.forEach(function(x){
+    var key = "huang_"+x.no;
+    var n = cmts.filter(function(c){ return c.cell===key; }).length;
+    h += '<tr>';
+    if (!printed[x.stage]){
+      printed[x.stage] = true;
+      h += '<td class="hs" rowspan="'+spans[x.stage]+'">'+esc(x.stage)+'</td>';
+    }
+    h += '<td class="hn">'+esc(x.no)+'</td><td>'+esc(x.text)+'</td>';
+    h += '<td><span class="hgo" data-act="hgo" data-dim="'+esc(x.dim)+'" data-row="'+esc(x.row)+'">'+esc(x.note)+'</span></td>';
+    h += '<td class="hk">'+huangSym(x.st)+'</td>';
+    h += '<td class="hc" data-cell="'+esc(key)+'"><button class="cbtn'+(n?" has":"")+'" data-act="cmt">註'+(n?" "+n:"")+'</button></td>';
+    h += '</tr>';
+  });
+  h += '</table></div>';
+  // 手機卡片
+  h += '<div class="hmob">';
+  HUANG.forEach(function(x){
+    h += '<div class="hcard"><div class="hch">'+esc(x.no)+'　'+esc(x.text)+'　'+huangSym(x.st)+'</div>'
+       + '<div class="hcl">'+esc(x.stage)+'　→ <span class="hgo" data-act="hgo" data-dim="'+esc(x.dim)+'" data-row="'+esc(x.row)+'" style="color:#1565c0;text-decoration:underline;cursor:pointer">'+esc(x.note)+'</span></div></div>';
+  });
+  h += '</div>';
+  // 圖例＋統計（即時計算）
+  var cnt = {ok:0, "new":0, wait:0};
+  HUANG.forEach(function(x){ if (cnt.hasOwnProperty(x.st)) cnt[x.st]++; });
+  h += '<div class="hleg">'+huangSym("ok")+' 現行已有　'+huangSym("new")+' 建議新增　'+huangSym("wait")+' 待分界　｜　統計：已有 '
+     + cnt.ok+'、新增 '+cnt["new"]+'、待分界 '+cnt.wait+'</div>';
+  h += '</div>';
   box.innerHTML = h;
 }
 function cellHtml(key){
@@ -1064,9 +1249,11 @@ function render(){
   renderSum();
   renderTabs();
   renderG24();
+  renderHx();
   renderMeets();
+  renderHuang();
   var tblbox = document.getElementById("tblbox");
-  if (curDim==="meet"){
+  if (curDim==="meet" || curDim==="huang"){
     renderFlt([]);
     tblbox.style.display = "none";
     document.getElementById("tbl").innerHTML = "";
@@ -1156,7 +1343,7 @@ function renderStructBtn(){
 function renderHid(){
   var el = document.getElementById("hidsec");
   if (!el) return;
-  if (!structMode || curDim==="meet"){ el.innerHTML = ""; return; }
+  if (!structMode || curDim==="meet" || curDim==="huang"){ el.innerHTML = ""; return; }
   var hid = allRows(curDim, true).filter(function(r){ return r.hidden; });
   if (!hid.length){ el.innerHTML = ""; return; }
   var h = '<div class="hidsec"><h3>已隱藏 '+hid.length+' 列</h3>';
@@ -1536,6 +1723,20 @@ document.addEventListener("click", function(ev){
   if (act==="ovnew"){ ovMode = "new"; renderOv(); return; }
   if (act==="ovold"){ ovMode = "old"; renderOv(); return; }
   if (act==="g24toggle"){ g24open = !g24open; renderG24(); return; }
+  if (act==="hxtoggle"){ hxOpen = !hxOpen; renderHx(); return; }
+  // 黃總流程軸落點 → 切到該構面並把該列捲到畫面中央、閃黃底
+  if (act==="hgo"){
+    var hd2 = actEl.getAttribute("data-dim"), hr2 = actEl.getAttribute("data-row");
+    if (!hd2 || !FIXED_ROWS[hd2]) return;
+    curDim = hd2; stFilter = null; editingCell = null; panelCell = null; render();
+    var hc2 = document.querySelector('#tbl td[data-cell="'+hd2+'_'+hr2+'_e"]');
+    var htr = hc2 ? hc2.parentNode : null;
+    if (!htr){ toast("此列目前未顯示（可能已隱藏）"); return; }
+    if (htr.scrollIntoView) htr.scrollIntoView({behavior:"smooth", block:"center"});
+    htr.classList.add("hflash");
+    setTimeout(function(){ if (htr) htr.classList.remove("hflash"); }, 1500);
+    return;
+  }
   if (act==="ovlclose"){ ovlClose(); return; }
   if (act==="export"){ expBackup(); return; }
   if (act==="struct"){ structMode = !structMode; render(); return; }
