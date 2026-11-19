@@ -324,6 +324,11 @@ td.dim .sctl button{background:#fff;}
 .rt-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px;}
 .rt-fld label{display:block;font-size:13px;font-weight:bold;color:#1B417D;margin-bottom:3px;}
 .rt-fld textarea{width:100%;min-height:86px;font-size:13px;font-family:inherit;border:1px solid #ccc;padding:6px 8px;line-height:1.6;}
+.rt-tip{font-size:11.5px;font-weight:normal;color:#8a6500;margin-left:8px;}
+.rt-nl{font-size:13px;line-height:1.6;color:#1B417D;background:#f3f6fb;border:1px dashed #c9d3e0;padding:4px 8px;margin-top:4px;}
+.rt-shl{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;margin-top:4px;}
+.rt-shl label{display:flex;align-items:center;gap:4px;font-size:13px;color:#222;margin:0;}
+.rt-shl input{width:auto;}
 .rt-pv{display:none;white-space:pre-wrap;font-size:12px;line-height:1.5;border:1px solid #999;padding:4px 6px;min-height:28px;}
 .rt-cbtns{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap;}
 .rt-meta{font-size:11.5px;color:#777;}
@@ -356,6 +361,7 @@ table.rt-xt{min-width:640px;font-size:13px;background:#fff;}
 @media print{
   .rt-caps,.rt-edit,.rt-btn,.rt-more,.rt-hint,.rt-fld textarea,.rt-del{display:none !important;}
   .rt-pv{display:block !important;}
+  .rt-nl,.rt-tip{display:none !important;}
   .rt-wrap{border:1px solid #000;}
   .rt-svgw{overflow:visible;border:1px solid #000;background:#fff;}
   .rt-svgw svg{max-width:100%;height:auto;}
@@ -369,7 +375,7 @@ table.rt-xt{min-width:640px;font-size:13px;background:#fff;}
 <div class="wrap">
 
 <div class="topbar">
-  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K1120-01</span>
+  <span class="t">職務考績表 職掌共編</span><span class="v" id="ver">K1120-02</span>
   <span class="pill" data-who="艋舺良">艋舺良</span>
   <span class="pill" data-who="沈協理">沈協理</span>
   <span class="pill" data-who="江副理">江副理</span>
@@ -431,6 +437,7 @@ table.rt-xt{min-width:640px;font-size:13px;background:#fff;}
 <script>
 "use strict";
 /* ================= KIMZO-WORK 職掌共編 K1022-02 ================= */
+/* K1120-02：路線圖改直式（線由上往下）、共站（一站掛多條線）、關聯線水平箭頭、線名加工料代號、新增鋼筋 C306 線；結構路網改為 RC 標準層（對照 K26 108年07月月簡報）；站卡欄名改「影響與後果」「前置作業」，「查什麼」「前置作業」自動編 01.、02. */
 /* K1120-01：新增「停檢點路線圖」頁籤（結構、裝修兩張路網，18 條線，站卡四格，轉乘，自動排版）；身分鈕增為四位 */
 /* K1103-02：10/30 會議回填——會議紀錄新增第四次檢討會議；3-2-1、3-2-3 標待修正；4-2-1、4-2-2 預填點工單權責；4-2-3 補即時處理 */
 /* K1103-01：參考經理人〈績效考核表怎麼寫〉新增 3 列討論中：1-1-3 落後自評對策、5-2-4 流程改善與傳承、6-1-7 加分項 */
@@ -438,7 +445,7 @@ table.rt-xt{min-width:640px;font-size:13px;background:#fff;}
 /* K1022-01：黃總流程軸（新頁籤＋各構面對照灰區）、新增 4 列、4-1-4 與 4-2-3 預填；K1008-01 為前一版 */
 /* K1008-01：進度總表（點數字篩選）、頁籤狀態文字、列狀態標籤（已定案／待修正／討論中／未開始）、
    標記待修正（fix_ 文件，四格重新定案後自動解除）、狀態說明列；K0918-05 為前一版 */
-var CODE_VERSION = "K1120-01";
+var CODE_VERSION = "K1120-02";
 var firebaseConfig = {
   apiKey: "AIzaSyD8UQE3Y2AyWo3-2KXEN0xJeGswE86bebI",
   authDomain: "g95-work-management.firebaseapp.com",
@@ -1777,43 +1784,65 @@ function expBackup(){
 /* ---------- 停檢點路線圖（K1120-01） ---------- */
 /* 畫面資料＝程式內建 RT_SEED，被 Firestore 同 id 文件（rtnet_／rtline_／rtstn_／rtx_）逐欄覆蓋；刪除＝hidden:true 墓碑 */
 var RT_PAL = ["#1B417D","#B5651D","#5F5E5A","#2E7D6B","#8E3B5E","#6A5ACD","#8a6500","#3b7ea1"];
-var RT_FKEYS = [["where","停在哪裡"],["check","查什麼"],["risk","沒查的後果"],["pass","誰放行"]];
+var RT_FKEYS = [["where","停在哪裡"],["check","查什麼"],["risk","影響與後果"],["pass","前置作業"]];
+var RT_NUMK = {check:true, pass:true};  /* 一行一項、自動編號的欄位 */
 var RT_SEED = {nets:{}, lines:{}, stns:{}, xs:{}};
 (function(){
   RT_SEED.nets.N1 = {t:"rtnet", nid:"N1", name:"結構", ord:10, hidden:false};
   RT_SEED.nets.N2 = {t:"rtnet", nid:"N2", name:"裝修", ord:20, hidden:false};
-  var LN = {5:"放樣", 7:"模板", 9:"輕隔間", 14:"金屬"};
+  var LN = {5:"放樣", 7:"模板柱樑", 9:"輕隔間", 14:"金屬"};
+  var LC = {5:"A303", 7:"C301", 9:"E438", 14:"E454"};
   for (var i=1;i<=18;i++){
     var lid = "L"+(i<10?"0":"")+i;
-    RT_SEED.lines[lid] = {t:"rtline", lid:lid, no:i, name:(LN[i]||("工項"+i))};
+    RT_SEED.lines[lid] = {t:"rtline", lid:lid, no:i, name:(LN[i]||("工項"+i)), code:(LC[i]||"")};
   }
+  RT_SEED.lines.L05.color = "#1B417D"; RT_SEED.lines.L07.color = "#8E3B5E"; RT_SEED.lines.L14.color = "#5F5E5A";
+  /* K1120-02 新增：模板牆（排在放樣與鋼筋之間，顏色同模板）、鋼筋 */
+  RT_SEED.lines.LW301 = {t:"rtline", lid:"LW301", no:5.5, name:"模板牆", code:"C301", color:"#8E3B5E"};
+  RT_SEED.lines.LC306 = {t:"rtline", lid:"LC306", no:6, name:"鋼筋", code:"C306", color:"#2E7D6B"};
+  /* K1120-02 結構路網＝RC 標準層（對照 K26 108年07月月簡報 上部、下部；東京 Metro 風格站號）
+     [sid, 主線, 代號, 站名, 排序, 共站也掛的線] */
+  var SHA = ["LW301","LC306"];               /* 共站A：放樣、模板牆、鋼筋 */
+  var SHB = ["LW301","LC306","L07","L14"];   /* 共站B：全部 */
   var ST = [
-    ["fy1","L05","N1","放1","基準點"],["fy2","L05","N1","放2","軸線"],["fy3","L05","N1","放3","邊線開口"],
-    ["fy4","L05","N1","放4","高程"],["fy5","L05","N1","放5","完成面收測"],
-    ["mb1","L07","N1","模1","單側模"],["mb2","L07","N1","模2","封模"],["mb3","L07","N1","模3","底模支撐"],
-    ["mb4","L07","N1","模4","外模查驗"],["mb5","L07","N1","模5","澆置前"],["mb6","L07","N1","模6","拆模前"],
-    ["js1","L14","N1","金1","預埋查驗"],
-    ["fy6","L05","N2","放6","裝修放樣"],
-    ["gj1","L09","N2","隔1","放線確認"],["gj2","L09","N2","隔2","骨架完成"],["gj3","L09","N2","隔3","封板前"],
-    ["gj4","L09","N2","隔4","批土前"],
-    ["js2","L14","N2","金2","內套筒假固定"],["js3","L14","N2","金3","滿焊"],["js4","L14","N2","金4","焊道檢測"],
-    ["js5","L14","N2","金5","格柵安裝"]
+    ["rA1","L05","A303-01","引基準點",10],
+    ["rSA","L05","A303-02","結構墨線",20,SHA],
+    ["rw1","LW301","C301-01","單側模",30],
+    ["rw2","LW301","C301-02","封牆模",40],
+    ["rc1","LC306","C306-01","預留筋先切",30],
+    ["rc2","LC306","C306-02","牆筋綁紮",40],
+    ["rc3","LC306","C306-03","柱筋續接器鎖接",50],
+    ["rc4","LC306","C306-04","柱筋扭力",60],
+    ["rc5","LC306","C306-05","柱箍筋繫筋",70],
+    ["rc6","LC306","C306-06","柱筋四面照",80],
+    ["rc7","LC306","C306-07","大樑續接器扭力",90],
+    ["rc8","LC306","C306-08","大樑筋間距續接",100],
+    ["rc9","LC306","C306-09","周邊樑主筋",110],
+    ["rc10","LC306","C306-10","小樑筋",120],
+    ["rc11","LC306","C306-11","版筋加鐵",130],
+    ["rm3","L07","C301-03","封柱模",30],
+    ["rm4","L07","C301-04","樑底模高程",40],
+    ["rm5","L07","C301-05","樑側模鋪板",50],
+    ["rm6","L07","C301-06","支撐鎖固",60],
+    ["rm7","L07","C301-07","外模進出",70],
+    ["re2","L14","E454-02","預埋",50],
+    ["rSB","L05","C311-01","澆置前",900,SHB],
+    ["rA3","L05","A303-03","RC後高程",950]
   ];
-  var cnt = {};
   ST.forEach(function(s){
-    var g = s[1]+"|"+s[2];
-    cnt[g] = (cnt[g]||0) + 1;
-    RT_SEED.stns[s[0]] = {t:"rtstn", sid:s[0], lid:s[1], net:s[2], code:s[3], name:s[4], ord:cnt[g]*10,
+    RT_SEED.stns[s[0]] = {t:"rtstn", sid:s[0], lid:s[1], net:"N1", code:s[2], name:s[3], ord:s[4], lids:(s[5]||[]).slice(),
       f:{where:"", check:"", risk:"", pass:""}, st:"wip", hidden:false};
   });
+  RT_SEED.stns.rA1.f = {where:"每層樓板", check:"引上基準點", risk:"", pass:"放樣圖加工\n基地積水排除"};
   [
-    ["xA","N1","A","fy3","mb1","邊線放行才立模",true],
-    ["xC","N1","C","fy4","mb3","高程定版面",true],
-    ["xH","N1","H","js1","mb5","預埋查完才澆置",true],
-    ["xD","N1","D","mb5","fy1","澆置前留引測孔，接上一層放1",false],
-    ["xE","N2","E","fy6","gj1","隔間線放行才立骨架",true],
-    ["xF","N2","F","fy6","js2","定位放行才假固定",true],
-    ["xI","N2","I","js4","","焊道檢測合格才能上黏結寶",false]
+    ["xR1","N1","1","rSA","rc1","墨線放出後，超出墨線的預留筋先切",true],
+    ["xR2","N1","2","rw1","rc2","單側模組立後，才綁牆筋",true],
+    ["xR3","N1","3","rc2","rw2","牆筋綁完，才封牆模",true],
+    ["xR4","N1","4","rc6","rm3","柱筋四面照拍完，才能封柱模",true],
+    ["xR5","N1","5","rm4","rc8","樑底模完成，才能綁大樑筋",true],
+    ["xR6","N1","6","rm5","rc10","樑側模鋪板完成，才能綁小樑筋、版筋",true],
+    ["xR7","N1","7","rm7","re2","外模定位後，才做外牆金屬預埋",true],
+    ["xR8","N1","↻","rA3","rA1","RC後高程做完，回到上一層引基準點",false]
   ].forEach(function(x){
     RT_SEED.xs[x[0]] = {t:"rtx", xid:x[0], net:x[1], code:x[2], from:x[3], to:x[4], note:x[5], draw:x[6], hidden:false};
   });
@@ -1851,17 +1880,22 @@ function rtNetList(N){
 function rtLineList(L){
   return rtVals(L).sort(function(a,b){ return ((a.no||0)-(b.no||0)) || (String(a.lid)<String(b.lid)?-1:1); });
 }
+/* 站是否在這條線上（主線或共站掛的線） */
+function rtOnLine(s, lid){ return s.lid===lid || (Object.prototype.toString.call(s.lids)==="[object Array]" && s.lids.indexOf(lid)>=0); }
+function rtIsShared(s){ return Object.prototype.toString.call(s.lids)==="[object Array]" && s.lids.length>0; }
 function rtStnsOf(S, lid, net, withHidden){
-  return rtVals(S).filter(function(s){ return s.lid===lid && s.net===net && (withHidden || !s.hidden); })
+  return rtVals(S).filter(function(s){ return rtOnLine(s, lid) && s.net===net && (withHidden || !s.hidden); })
     .sort(function(a,b){ return ((a.ord||0)-(b.ord||0)) || (String(a.sid)<String(b.sid)?-1:1); });
 }
 function rtLineHasAny(S, lid){
-  return rtVals(S).some(function(s){ return s.lid===lid && !s.hidden; });
+  return rtVals(S).some(function(s){ return rtOnLine(s, lid) && !s.hidden; });
 }
 function rtLineName(l, S){
   if (!l) return "";
+  if (l.code) return (l.name||"")+" "+l.code;
   return (l.no!=null ? l.no+" " : "") + (l.name||"") + (rtLineHasAny(S, l.lid) ? "線" : "");
 }
+function rtLineColor(l){ return (l && l.color) ? l.color : rtColor(l ? l.no : 1); }
 function rtColor(no){
   var n = parseInt(no, 10); if (isNaN(n) || n<1) n = 1;
   return RT_PAL[(n-1) % RT_PAL.length];
@@ -1879,96 +1913,126 @@ function rtDrawable(x, S, net){
   var a = S[x.from], b = S[x.to];
   return !!(a && b && !a.hidden && !b.hidden && a.net===net && b.net===net);
 }
+/* 直式排版（東京 Metro 風格）：一條線＝一欄，由上往下；層級由「前一站＋1」與關聯線決定：
+   到站不早於從站；從站若沒有被別站指向，就拉到跟到站同一列（畫成水平箭頭） */
 function rtLayout(net, S, L, X){
   var rowsL = [];
   rtLineList(L).forEach(function(l){
     var ss = rtStnsOf(S, l.lid, net);
     if (ss.length) rowsL.push({l:l, ss:ss});
   });
-  var col = {}, pos = {};
-  rowsL.forEach(function(r, ri){ r.ss.forEach(function(s, i){ col[s.sid] = i; pos[s.sid] = ri; }); });
+  var col = {}, rowsOf = {};
+  rowsL.forEach(function(r, ri){ r.ss.forEach(function(s){ col[s.sid] = 0; (rowsOf[s.sid] = rowsOf[s.sid] || []).push(ri); }); });
   var edges = rtVals(X).filter(function(x){ return rtDrawable(x, S, net); });
-  for (var it=0; it<50; it++){
+  var hasIn = {}; edges.forEach(function(e){ hasIn[e.to] = true; });
+  function sameLine(a, b){ return (rowsOf[a]||[]).some(function(r){ return (rowsOf[b]||[]).indexOf(r)>=0; }); }
+  for (var it=0; it<150; it++){
     var ch = false;
     rowsL.forEach(function(r){
       r.ss.forEach(function(s, i){
         var c = (i>0) ? col[r.ss[i-1].sid]+1 : 0;
         edges.forEach(function(e){
           if (e.to===s.sid && col[e.from]>c) c = col[e.from];
-          if (e.from===s.sid && col[e.to]>c && col[e.to]<60) c = col[e.to];
+          if (e.from===s.sid && !hasIn[s.sid] && !sameLine(e.from, e.to) && col[e.to]>c && col[e.to]<80) c = col[e.to];
         });
-        if (c!==col[s.sid]){ col[s.sid] = c; ch = true; }
+        if (c>col[s.sid] && c<100){ col[s.sid] = c; ch = true; }
       });
     });
     if (!ch) break;
   }
-  return {rows:rowsL, col:col, pos:pos, edges:edges};
+  return {rows:rowsL, col:col, rowsOf:rowsOf, edges:edges};
 }
-function rtWrap(s){
-  var a = String(s||"").split("");
-  if (a.length<=6) return [a.join("")];
-  if (a.length<=12) return [a.slice(0,6).join(""), a.slice(6).join("")];
-  return [a.slice(0,6).join(""), a.slice(6,11).join("")+"…"];
+function rtCut(s, n){ var a = String(s||"").split(""); return a.length>n ? a.slice(0,n-1).join("")+"…" : a.join(""); }
+/* 站號拆成「線代號」＋「號碼」：C306-05 → C306 / 05 */
+function rtCodeParts(code){
+  var c = String(code||""), k = c.lastIndexOf("-");
+  return (k>0) ? [c.slice(0,k), c.slice(k+1)] : ["", c];
 }
 function rtSvg(net, S, L, X){
   var lay = rtLayout(net, S, L, X);
   if (!lay.rows.length) return '<div class="rt-hint" style="padding:16px">此路網目前沒有站，請在下方「路線與站」選一條線按「＋加站」。</div>';
-  var LX = 140, CW = 96, TOP = 48, RH = 112;
-  var maxCol = 0;
-  Object.keys(lay.col).forEach(function(k){ if (lay.col[k]>maxCol) maxCol = lay.col[k]; });
-  var W = LX + maxCol*CW + 80, H = TOP + (lay.rows.length-1)*RH + 64;
-  function px(sid){ return LX + lay.col[sid]*CW; }
-  function py(sid){ return TOP + lay.pos[sid]*RH; }
+  var LX = 60, CW = 200, TOP = 80, RH = 64, nC = lay.rows.length, maxLv = 0;
+  Object.keys(lay.col).forEach(function(k){ if (lay.col[k]>maxLv) maxLv = lay.col[k]; });
+  var W = LX + (nC-1)*CW + 190, H = TOP + maxLv*RH + 50;
+  function px(ri){ return LX + ri*CW; }
+  function py(sid){ return TOP + lay.col[sid]*RH; }
+  var GOLD = "#BA7517";
   var h = '<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" font-family="Noto Sans TC, Microsoft JhengHei, sans-serif">';
-  // 線
+  h += '<defs><marker id="rtarr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="'+GOLD+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>';
+  var HALO = ' stroke="#f7f9fc" stroke-width="4" paint-order="stroke" stroke-linejoin="round"';
+  // 欄頭＋路線（相鄰兩站差兩列以上、中間沒站＝細虛線，表示等候）
   lay.rows.forEach(function(r, ri){
-    var c = rtColor(r.l.no), y = TOP + ri*RH;
-    var x1 = px(r.ss[0].sid) - 20, x2 = px(r.ss[r.ss.length-1].sid) + 20;
-    var nm = rtLineName(r.l, S); if (nm.length>8) nm = nm.slice(0,7)+"…";
-    h += '<text x="10" y="'+(y+5)+'" font-size="14" font-weight="bold" fill="'+c+'">'+esc(nm)+'</text>';
-    h += '<line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'" stroke="'+c+'" stroke-width="5" stroke-linecap="round"/>';
-  });
-  // 轉乘虛線（跨兩列以上改弧線，避免穿過中間的站；代號放在站名下方的空檔）
-  var HALO = ' stroke="#fff" stroke-width="3" paint-order="stroke" stroke-linejoin="round"';
-  var badges = [];
-  lay.edges.forEach(function(e){
-    var x1 = px(e.from), y1 = py(e.from), x2 = px(e.to), y2 = py(e.to);
-    var span = Math.abs(lay.pos[e.to]-lay.pos[e.from]);
-    if (span>1){
-      var cx = Math.min(x1,x2) - 56, cy = (y1+y2)/2;
-      h += '<path d="M'+x1+' '+y1+' Q'+cx+' '+cy+' '+x2+' '+y2+'" fill="none" stroke="#888" stroke-width="2" stroke-dasharray="6 4"/>';
-      badges.push([0.25*x1+0.5*cx+0.25*x2, cy, e.code]);
-    } else {
-      h += '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#888" stroke-width="2" stroke-dasharray="6 4"/>';
-      if (y1===y2) badges.push([(x1+x2)/2, y1-14, e.code]);
-      else {
-        var yt = Math.min(y1,y2), by = yt + 66, t = (by-y1)/(y2-y1);
-        badges.push([x1+(x2-x1)*t, by, e.code]);
-      }
+    var c = rtLineColor(r.l), x = px(ri);
+    h += '<text x="'+(x-16)+'" y="30" font-size="15" font-weight="bold" fill="'+c+'">'+esc(rtCut(rtLineName(r.l, S), 11))+'</text>';
+    for (var i=1;i<r.ss.length;i++){
+      var y1 = py(r.ss[i-1].sid), y2 = py(r.ss[i].sid);
+      if (y2<=y1) continue;
+      if (y2-y1 > RH*2) h += '<line x1="'+x+'" y1="'+y1+'" x2="'+x+'" y2="'+y2+'" stroke="'+c+'" stroke-width="2" stroke-dasharray="3 5"/>';
+      else h += '<line x1="'+x+'" y1="'+y1+'" x2="'+x+'" y2="'+y2+'" stroke="'+c+'" stroke-width="9"/>';
     }
   });
-  badges.forEach(function(b){
-    h += '<circle cx="'+b[0]+'" cy="'+b[1]+'" r="10" fill="#fff" stroke="#888" stroke-width="1.5"/>';
-    h += '<text x="'+b[0]+'" y="'+(b[1]+4)+'" font-size="12" font-weight="bold" fill="#444" text-anchor="middle">'+esc(b[2]||"")+'</text>';
+  // 關聯線
+  var badges = [];
+  lay.edges.forEach(function(e){
+    var ra = lay.rowsOf[e.from] || [0], rb = lay.rowsOf[e.to] || [0], A = ra[0], B = rb[0], best = 1e9;
+    ra.forEach(function(p){ rb.forEach(function(q){ var d = Math.abs(p-q); if (d<best){ best = d; A = p; B = q; } }); });
+    var x1 = px(A), y1 = py(e.from), x2 = px(B), y2 = py(e.to);
+    if (A===B){ badges.push([x1-26, (y1+y2)/2, e.code]); return; }
+    var dir = (x2>x1) ? 1 : -1;
+    if (y1===y2){
+      h += '<line x1="'+(x1+dir*24)+'" y1="'+y1+'" x2="'+(x2-dir*26)+'" y2="'+y2+'" stroke="'+GOLD+'" stroke-width="3" marker-end="url(#rtarr)"/>';
+      badges.push([(x1+x2)/2, y1+16, e.code]);
+    } else {
+      var sg = (y2>y1) ? 1 : -1;   /* 斜線：從方框角出、進方框角，避開站名 */
+      h += '<line x1="'+(x1+dir*14)+'" y1="'+(y1+sg*22)+'" x2="'+(x2-dir*14)+'" y2="'+(y2-sg*24)+'" stroke="'+GOLD+'" stroke-width="3" stroke-dasharray="7 4" marker-end="url(#rtarr)"/>';
+      badges.push([(x1+x2)/2, (y1+y2)/2+16, e.code]);
+    }
   });
-  // 站
-  lay.rows.forEach(function(r){
-    var c = rtColor(r.l.no);
+  // 站：共站＝白色長膠囊；一般站＝線色圓角方框站號（上：線代號，下：號碼），站名在右上
+  var done = {};
+  lay.rows.forEach(function(r, ri){
+    var c = rtLineColor(r.l);
     r.ss.forEach(function(s){
-      var x = px(s.sid), y = py(s.sid), on = (s.sid===rtSel);
+      if (done[s.sid]) return;
+      var y = py(s.sid), on = (s.sid===rtSel), rs = lay.rowsOf[s.sid] || [ri];
       h += '<g class="rt-stn" data-act="rtsel" data-sid="'+esc(s.sid)+'">';
-      h += '<circle cx="'+x+'" cy="'+y+'" r="22" fill="#fff" fill-opacity="0"/>';
-      if (on) h += '<circle cx="'+x+'" cy="'+y+'" r="17" fill="none" stroke="#b8860b" stroke-width="2.5"/>';
-      h += '<circle cx="'+x+'" cy="'+y+'" r="11" fill="'+(on?"#fdf3d6":"#fff")+'" stroke="'+c+'" stroke-width="'+(on?6:4)+'"/>';
-      h += '<text x="'+x+'" y="'+(y-20)+'" font-size="12" font-weight="bold" fill="#222" text-anchor="middle"'+HALO+'>'+esc(s.code)+(s.st==="done"?" 定":"")+'</text>';
-      rtWrap(s.name).forEach(function(t, i){
-        h += '<text x="'+x+'" y="'+(y+30+i*15)+'" font-size="12" fill="#333" text-anchor="middle"'+HALO+'>'+esc(t)+'</text>';
-      });
+      if (rs.length>1){
+        done[s.sid] = 1;
+        var mn = Math.min.apply(null, rs), mx = Math.max.apply(null, rs);
+        var xa = px(mn)-30, xb = px(mx)+30;
+        h += '<rect x="'+xa+'" y="'+(y-22)+'" width="'+(xb-xa)+'" height="44" rx="22" fill="'+(on?"#fdf3d6":"#fff")+'" stroke="'+(on?"#b8860b":"#333")+'" stroke-width="'+(on?3:1.6)+'"/>';
+        h += '<text x="'+((xa+xb)/2)+'" y="'+(y+6)+'" font-size="15" font-weight="bold" fill="#222" text-anchor="middle">共站　'+esc(s.name)+'　'+esc(s.code)+(s.st==="done"?"　定":"")+'</text>';
+      } else {
+        var x = px(ri), cp = rtCodeParts(s.code);
+        if (on) h += '<rect x="'+(x-24)+'" y="'+(y-24)+'" width="48" height="48" rx="11" fill="none" stroke="#b8860b" stroke-width="3"/>';
+        h += '<rect x="'+(x-18)+'" y="'+(y-18)+'" width="36" height="36" rx="8" fill="'+(on?"#fdf3d6":"#fff")+'" stroke="'+c+'" stroke-width="4"/>';
+        if (cp[0]){
+          h += '<text x="'+x+'" y="'+(y-3)+'" font-size="10" fill="#555" text-anchor="middle">'+esc(cp[0])+'</text>';
+          h += '<text x="'+x+'" y="'+(y+12)+'" font-size="13" font-weight="bold" fill="#222" text-anchor="middle">'+esc(cp[1])+'</text>';
+        } else {
+          h += '<text x="'+x+'" y="'+(y+5)+'" font-size="12" font-weight="bold" fill="#222" text-anchor="middle">'+esc(rtCut(cp[1], 4))+'</text>';
+        }
+        h += '<text x="'+(x+24)+'" y="'+(y-13)+'" font-size="14.5" font-weight="bold" fill="#222">'+esc(rtCut(s.name, 9))+(s.st==="done"?' <tspan fill="#1B417D">定</tspan>':'')+'</text>';
+      }
       h += '</g>';
     });
   });
+  badges.forEach(function(b){
+    h += '<circle cx="'+b[0]+'" cy="'+b[1]+'" r="10" fill="#FAEEDA" stroke="'+GOLD+'" stroke-width="1.2"/>';
+    h += '<text x="'+b[0]+'" y="'+(b[1]+4.5)+'" font-size="12" font-weight="bold" fill="#633806" text-anchor="middle">'+esc(b[2]||"")+'</text>';
+  });
   h += '</svg>';
   return h;
+}
+/* 一行一項 → 01.xxx（已自己打編號的會先去掉再重編） */
+function rtNumLines(v){
+  return String(v||"").split(/\r?\n/).map(function(t){ return t.replace(/^\s*(\d+\s*[\.．、)]\s*)/, "").trim(); })
+    .filter(function(t){ return t; }).map(function(t, i){ return (i<9?"0":"")+(i+1)+"."+t; });
+}
+function rtStnLines(s, L, S){
+  var a = [rtLineName(L[s.lid], S)];
+  if (rtIsShared(s)) s.lids.forEach(function(x){ if (L[x]) a.push(rtLineName(L[x], S)); });
+  return (rtIsShared(s) ? "共站：" : "") + a.join("、");
 }
 function rtCardHtml(S, L){
   var s = rtSel ? S[rtSel] : null;
@@ -1976,14 +2040,17 @@ function rtCardHtml(S, L){
   var f = s.f || {}, done = (s.st==="done");
   var h = '<div class="rt-card"><h4><span>'+esc(s.code)+' '+esc(s.name)+'</span>'
         + '<span class="bg '+(done?"b1":"b3")+'" data-act="rtst" data-sid="'+esc(s.sid)+'" style="cursor:pointer" title="點此切換狀態">'+(done?"已定案":"討論中")+'</span>'
-        + '<span class="rt-lnm">'+esc(rtLineName(L[s.lid], S))+'</span>'
+        + '<span class="rt-lnm">'+esc(rtStnLines(s, L, S))+'</span>'
         + '<button class="rt-btn sm" data-act="rtstnren" data-sid="'+esc(s.sid)+'">改代號站名</button></h4>';
   h += '<div class="rt-grid">';
   RT_FKEYS.forEach(function(k){
     var v = (f[k[0]]==null) ? "" : String(f[k[0]]);
-    h += '<div class="rt-fld"><label>'+esc(k[1])+'</label>'
-       + '<textarea id="rtf_'+k[0]+'" data-rtk="'+k[0]+'" data-sid="'+esc(s.sid)+'">'+esc(v)+'</textarea>'
-       + '<div class="rt-pv">'+(v ? esc(v) : '（未填）')+'</div></div>';
+    var nb = RT_NUMK[k[0]], nl = nb ? rtNumLines(v) : null;
+    var pv = nb ? (nl.length ? nl.map(esc).join("<br>") : '（未填）') : (v ? esc(v) : '（未填）');
+    h += '<div class="rt-fld"><label>'+esc(k[1])+(nb ? '<span class="rt-tip">一行一項，自動編號</span>' : '')+'</label>'
+       + '<textarea id="rtf_'+k[0]+'" data-rtk="'+k[0]+'" data-sid="'+esc(s.sid)+'"'+(nb ? ' placeholder="一行打一項，存檔後自動編 01.、02."' : '')+'>'+esc(v)+'</textarea>'
+       + (nb && nl.length ? '<div class="rt-nl">'+nl.map(esc).join("<br>")+'</div>' : '')
+       + '<div class="rt-pv">'+pv+'</div></div>';
   });
   h += '</div><div class="rt-cbtns"><button class="rt-btn pri" data-act="rtsave" data-sid="'+esc(s.sid)+'">儲存</button>'
      + '<span class="rt-meta">'+(s.by ? '最後修改：'+esc(s.by)+' '+esc(s.at||"") : '預載內容，尚未修改')+'</span></div></div>';
@@ -1994,14 +2061,14 @@ function rtEditHtml(S, L, N){
   lines.forEach(function(l){ if (rtStnsOf(S, l.lid, rtNet).length) used.push(l); else empty.push(l); });
   function lnHtml(l){
     var ss = rtStnsOf(S, l.lid, rtNet);
-    var h = '<div class="rt-ln"><div class="rt-lnh"><span class="rt-sw" style="background:'+rtColor(l.no)+'"></span>'
+    var h = '<div class="rt-ln"><div class="rt-lnh"><span class="rt-sw" style="background:'+rtLineColor(l)+'"></span>'
           + '<span>'+esc(rtLineName(l, S))+'</span>'
           + '<button class="rt-btn sm" data-act="rtlnren" data-lid="'+esc(l.lid)+'">改名</button>'
           + '<button class="rt-btn sm" data-act="rtaddstn" data-lid="'+esc(l.lid)+'">＋加站</button></div>';
     if (ss.length){
       h += '<div class="rt-stl">';
       ss.forEach(function(s){
-        h += '<span class="rt-chip'+(s.sid===rtSel?" on":"")+'"><span class="rt-cn" data-act="rtsel" data-sid="'+esc(s.sid)+'">'+esc(s.code)+' '+esc(s.name)+'</span>'
+        h += '<span class="rt-chip'+(s.sid===rtSel?" on":"")+'"><span class="rt-cn" data-act="rtsel" data-sid="'+esc(s.sid)+'">'+esc(s.code)+' '+esc(s.name)+(rtIsShared(s)?'（共站）':'')+'</span>'
            + '<button class="rt-btn sm" data-act="rtup" data-sid="'+esc(s.sid)+'">上移</button>'
            + '<button class="rt-btn sm" data-act="rtdn" data-sid="'+esc(s.sid)+'">下移</button>'
            + '<button class="rt-btn sm del" data-act="rtdel" data-sid="'+esc(s.sid)+'">刪</button></span>';
@@ -2037,8 +2104,8 @@ function rtXHtml(S, N, X){
   var all = rtVals(X).filter(function(x){ return rtXRelated(x, S); })
     .sort(function(a,b){ return String(a.code)<String(b.code) ? -1 : (String(a.code)>String(b.code) ? 1 : 0); });
   var vis = all.filter(function(x){ return !x.hidden; }), del = all.filter(function(x){ return x.hidden; });
-  var h = '<div class="rt-sec"><h4>轉乘<span>灰色虛線＝前一條線放行後才能進下一條線</span>'
-        + '<button class="rt-btn sm" data-act="rtxadd">＋加轉乘</button></h4>';
+  var h = '<div class="rt-sec"><h4>關聯線<span>金色箭頭＝從站做完，到站才能開始；同一條線上的只標號碼</span>'
+        + '<button class="rt-btn sm" data-act="rtxadd">＋加關聯線</button></h4>';
   if (!vis.length) h += '<div class="rt-nd">此路網尚無轉乘</div>';
   else {
     h += '<div class="rt-xtw"><table class="rt-xt"><tr><th style="width:56px">代號</th><th>從站 → 到站</th><th>說明</th><th style="width:110px">畫線</th><th style="width:96px">操作</th></tr>';
@@ -2086,7 +2153,7 @@ function renderRoute(){
   var nets = rtNetList(N);
   if (nets.length && rtNet!==rtNetPend && !nets.some(function(n){ return n.nid===rtNet; })) rtNet = nets[0].nid;
   if (rtSel && (!S[rtSel] || S[rtSel].hidden || S[rtSel].net!==rtNet)) rtSel = null;
-  var h = '<div class="rt-wrap"><div class="rt-ttl">停檢點路線圖<span>一條線＝一個工項；圓圈＝停檢點；灰色虛線＝轉乘（放行後才進下一條線）</span></div>';
+  var h = '<div class="rt-wrap"><div class="rt-ttl">停檢點路線圖<span>一條線＝一個工項，由上往下走；方框＝站號（工料代號＋號碼）；白色長條＝共站；金色箭頭＝關聯線（前站做完，後站才能開始）；細虛線＝這段沒有停檢點</span></div>';
   h += '<div class="rt-caps">';
   nets.forEach(function(n){
     h += '<span class="rt-cap'+(n.nid===rtNet?" on":"")+'" data-act="rtnet" data-nid="'+esc(n.nid)+'">'+esc(n.name)+'</span>';
@@ -2127,12 +2194,12 @@ function rtPutNet(n){
   return fsSet("rtnet_"+n.nid, rtStamp({t:"rtnet", nid:n.nid, name:n.name||"", ord:(typeof n.ord==="number"?n.ord:0), hidden:n.hidden===true}));
 }
 function rtPutLine(l){
-  return fsSet("rtline_"+l.lid, rtStamp({t:"rtline", lid:l.lid, no:(typeof l.no==="number"?l.no:0), name:l.name||""}));
+  return fsSet("rtline_"+l.lid, rtStamp({t:"rtline", lid:l.lid, no:(typeof l.no==="number"?l.no:0), name:l.name||"", code:l.code||"", color:l.color||""}));
 }
 function rtPutStn(s, keepMeta){
   var f = s.f || {};
   var d = {t:"rtstn", sid:s.sid, lid:s.lid, net:s.net, code:s.code||"", name:s.name||"",
-    ord:(typeof s.ord==="number"?s.ord:0),
+    ord:(typeof s.ord==="number"?s.ord:0), lids:(rtIsShared(s) ? s.lids.slice() : []),
     f:{where:String(f.where||""), check:String(f.check||""), risk:String(f.risk||""), pass:String(f.pass||"")},
     st:(s.st==="done"?"done":"wip"), hidden:s.hidden===true};
   return fsSet("rtstn_"+s.sid, rtStamp(d, keepMeta ? s : null));
@@ -2150,6 +2217,15 @@ function rtOpenStnForm(mode, id){
   h = '<h3>'+(mode==="add" ? '加站　'+esc(rtLineName(l, S))+'（'+esc(rtNetName(N, rtNet))+'）' : '改代號站名　'+esc(s.code)+' '+esc(s.name))+'</h3>';
   h += '<label>站代號（例：模7）</label><input id="rtfc" value="'+esc(s ? s.code : "")+'">';
   h += '<label>站名（例：澆置後）</label><input id="rtfn" value="'+esc(s ? s.name : "")+'">';
+  var plid = s ? s.lid : id, cur = (s && rtIsShared(s)) ? s.lids : [];
+  var cand = rtLineList(L).filter(function(x){ return x.lid!==plid && (x.code || rtStnsOf(S, x.lid, rtNet).length); });
+  if (cand.length){
+    h += '<label>共站：這站也掛在哪些線（可複選，不勾＝一般站）</label><div class="rt-shl">';
+    cand.forEach(function(x){
+      h += '<label><input type="checkbox" class="rtfl" value="'+esc(x.lid)+'"'+(cur.indexOf(x.lid)>=0?" checked":"")+'> '+esc(rtLineName(x, S))+'</label>';
+    });
+    h += '</div>';
+  }
   h += '<div class="obtns"><button class="pri" data-act="rtstnsave">儲存</button><button data-act="ovlclose">取消</button></div>';
   ovlOpen(h);
 }
@@ -2252,18 +2328,19 @@ function rtHandle(act, el){
     if (!rtWho()) return true;
     var fc = document.getElementById("rtfc"), fn = document.getElementById("rtfn");
     var vc = fc ? fc.value.trim() : "", vn = fn ? fn.value.trim() : "";
+    var vls = []; Array.prototype.forEach.call(document.querySelectorAll(".rtfl"), function(c){ if (c.checked) vls.push(c.value); });
     if (!vc || !vn){ toast("請填站代號與站名"); return true; }
     S = rtAll("stns");
     var fm = rtForm; rtForm = null;
     if (fm.mode==="add"){
       var mx = 0; rtStnsOf(S, fm.lid, rtNet, true).forEach(function(z){ if ((z.ord||0)>mx) mx = z.ord||0; });
-      var ns = {sid:"u"+Date.now(), lid:fm.lid, net:rtNet, code:vc, name:vn, ord:mx+10,
+      var ns = {sid:"u"+Date.now(), lid:fm.lid, net:rtNet, code:vc, name:vn, ord:mx+10, lids:vls,
         f:{where:"", check:"", risk:"", pass:""}, st:"wip", hidden:false};
       ovlClose();
       rtPutStn(ns).then(function(){ rtSel = ns.sid; renderRoute(); addLog("路線圖加站", vc+" "+vn); }).catch(function(){});
     } else {
       s = S[fm.sid]; if (!s){ ovlClose(); return true; }
-      var os = s.code+" "+s.name; s = rtCopy(s); s.code = vc; s.name = vn;
+      var os = s.code+" "+s.name; s = rtCopy(s); s.code = vc; s.name = vn; s.lids = vls;
       ovlClose();
       rtPutStn(s).then(function(){ addLog("路線圖改站", os+" 改為 "+vc+" "+vn); }).catch(function(){});
     }
