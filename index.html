@@ -329,202 +329,6 @@ td.dim .sctl button{background:#fff;}
   .htb .hgo{color:#000;text-decoration:none;}
 }
 
-/* ---------- 版本紀錄（K1120-06） ---------- */
-/* 存在獨立集合 kaoji_ver（不進主集合即時監聽，避免每次開頁下載全部版本）；文件 id＝YYYYMMDD，同日覆寫成當天最新內容 */
-var VCOL = "kaoji_ver";
-var vers = {};
-var verLoaded = false, verLoadStarted = false, verTimer = null;
-var verSel = [];
-var verCmpPair = null;
-function verPayload(){
-  return JSON.stringify({cells:cells, rows:rows, meets:meets, rowmods:rowmods, grpmods:grpmods, fixes:fixes,
-    rtnets:rtnets, rtlines:rtlines, rtstns:rtstns, rtxs:rtxs});
-}
-function verLoad(){
-  if (!db) return;
-  verLoadStarted = true;
-  db.collection(VCOL).get().then(function(qs){
-    qs.forEach(function(doc){ var d = doc.data(); if (d && d.t==="ver" && d.date) vers[d.date] = d; });
-    Object.keys(snaps).forEach(function(ds){
-      var sp = snaps[ds];
-      if (!vers[ds] && sp && sp.data){
-        var v = {t:"ver", date:ds, ts:sp.ts||Date.now(), by:"每日快照", data:sp.data};
-        vers[ds] = v;
-        db.collection(VCOL).doc(ds).set(v).catch(function(){});
-      }
-    });
-    verFixCounts();
-    verLoaded = true;
-    renderBk();
-    verSave();
-  }).catch(function(){ verLoaded = true; renderBk(); });
-}
-function verPrev(ds){
-  var ks = Object.keys(vers).filter(function(k){ return k < ds; }).sort();
-  return ks.length ? vers[ks[ks.length-1]] : null;
-}
-function verFixCounts(){
-  Object.keys(vers).sort().forEach(function(ds){
-    var v = vers[ds];
-    if (typeof v.n === "number") return;
-    var pv = verPrev(ds);
-    try{ v.n = pv ? verDiff(JSON.parse(pv.data), JSON.parse(v.data)).length : 0; }catch(e){ v.n = 0; }
-    db.collection(VCOL).doc(ds).set(v).catch(function(){});
-  });
-}
-function verSchedule(){
-  if (!verLoaded) return;
-  if (verTimer) clearTimeout(verTimer);
-  verTimer = setTimeout(function(){ verTimer = null; verSave(); }, 15000);
-}
-function verSave(){
-  if (!db || !verLoaded || !connected) return;
-  var ds = tpDay(), p;
-  try{ p = verPayload(); }catch(e){ return; }
-  var pv = verPrev(ds);
-  if (vers[ds] && vers[ds].data === p) return;
-  if (!vers[ds] && pv && pv.data === p) return;
-  var n = 0;
-  try{ n = pv ? verDiff(JSON.parse(pv.data), JSON.parse(p)).length : 0; }catch(e){}
-  var v = {t:"ver", date:ds, ts:Date.now(), by:who()||"", data:p, n:n};
-  vers[ds] = v;
-  db.collection(VCOL).doc(ds).set(v).then(function(){ renderBk(); }).catch(function(){});
-  renderBk();
-}
-function wkName(ds){
-  if (!ds || ds.length!==8) return "";
-  var d = new Date(Date.UTC(+ds.slice(0,4), +ds.slice(4,6)-1, +ds.slice(6,8)));
-  return "日一二三四五六".charAt(d.getUTCDay());
-}
-function meetDay(md){
-  var m = String(md||"").match(/^(\d{2,3})[-\/.](\d{1,2})[-\/.](\d{1,2})/);
-  if (!m) return "";
-  return String(+m[1]+1911) + ("0"+m[2]).slice(-2) + ("0"+m[3]).slice(-2);
-}
-function meetOfDay(ds){
-  var out = [];
-  MEET_FIX.forEach(function(m){ if (meetDay(m.date)===ds) out.push(m.title); });
-  Object.keys(meets).forEach(function(k){ var m = meets[k]; if (m && !m.hidden && meetDay(m.date)===ds && out.indexOf(m.title)<0) out.push(m.title); });
-  return out.join("、");
-}
-function vLines(a){ return (a||[]).join("\n"); }
-function verView(o){
-  var v = {};
-  var ck = {};
-  Object.keys(SEED).forEach(function(k){ ck[k]=1; });
-  Object.keys(o.cells||{}).forEach(function(k){ ck[k]=1; });
-  Object.keys(ck).forEach(function(k){
-    var c = (o.cells||{})[k];
-    var lines = (c && c.lines) ? c.lines : (SEED[k] || []);
-    var lab; try{ lab = cName(k); }catch(e){ lab = k; }
-    v["c|"+k] = {sec:k.split("_")[0], label:lab, txt:vLines(lines)};
-  });
-  Object.keys(o.rows||{}).forEach(function(dim){
-    (o.rows[dim]||[]).forEach(function(r){ if (!r.hidden) v["r|"+dim+"_"+r.id] = {sec:dim, label:"自訂列 "+r.id, txt:r.name||""}; });
-  });
-  Object.keys(o.rowmods||{}).forEach(function(k){
-    var m = o.rowmods[k]; if (!m) return;
-    v["rm|"+k] = {sec:m.dim, label:"列設定 "+m.row, txt:(m.name?("名稱："+m.name):"")+(m.hidden?"\n（隱藏）":"")};
-  });
-  Object.keys(o.fixes||{}).forEach(function(k){
-    var f = o.fixes[k]; if (!f || !f.on) return;
-    var lab; try{ lab = rowName(f.dim, f.row); }catch(e){ lab = f.row; }
-    v["fx|"+k] = {sec:f.dim, label:"待修正 "+lab, txt:f.why||"待修正"};
-  });
-  Object.keys(o.meets||{}).forEach(function(k){
-    var m = o.meets[k]; if (!m || m.hidden) return;
-    v["mt|"+k] = {sec:"meet", label:(m.date||"")+" "+(m.title||""), txt:vLines(m.lines)};
-  });
-  var S = rtMerge(RT_SEED.stns, o.rtstns||{});
-  Object.keys(S).forEach(function(sid){
-    var s = S[sid]; if (!s || s.hidden) return;
-    var base = (s.code||"")+" "+(s.name||"");
-    v["sn|"+sid] = {sec:"rt", label:base+" / 站名", txt:base};
-    RT_FKEYS.forEach(function(fk){
-      v["sf|"+sid+"|"+fk[0]] = {sec:"rt", label:base+" / "+fk[1], txt:String((s.f&&s.f[fk[0]])||"")};
-    });
-    v["ss|"+sid] = {sec:"rt", label:base+" / 狀態", txt:(s.st==="done"?"已定案":"討論中")};
-  });
-  var X = rtMerge(RT_SEED.xs, o.rtxs||{});
-  Object.keys(X).forEach(function(xid){
-    var x = X[xid]; if (!x || x.hidden) return;
-    var fs = S[x.from], ts = S[x.to];
-    v["x|"+xid] = {sec:"rt", label:"轉乘 "+(x.code||xid),
-      txt:(fs?fs.code:"")+" → "+(ts?ts.code:"")+(x.note?("\n"+x.note):"")};
-  });
-  return v;
-}
-function verDiff(A, B){
-  var va = verView(A), vb = verView(B), out = [];
-  var keys = {};
-  Object.keys(va).forEach(function(k){ keys[k]=1; });
-  Object.keys(vb).forEach(function(k){ keys[k]=1; });
-  Object.keys(keys).forEach(function(k){
-    var a = va[k], b = vb[k];
-    var at = a ? a.txt : "", bt = b ? b.txt : "";
-    if (at === bt) return;
-    var ty = !at ? "新增" : (!bt ? "刪除" : "修改");
-    var x = b || a;
-    out.push({key:k, sec:x.sec, label:x.label, type:ty, old:at, nw:bt});
-  });
-  return out;
-}
-function verSecName(id){
-  if (id==="rt") return "停檢點路線圖";
-  if (id==="meet") return "會議紀錄";
-  for (var i=0;i<DIMS.length;i++) if (DIMS[i].id===id) return DIMS[i].name;
-  return id;
-}
-function verVerName(ds){ var mt = meetOfDay(ds); return dayLabel(ds).slice(5).replace("-","/") + (mt ? " "+mt : ""); }
-function verCompare(d1, d2){
-  if (d1 > d2){ var t = d1; d1 = d2; d2 = t; }
-  verCmpPair = [d1, d2];
-  var h = '<div class="cmpw"><h3>比對：'+esc(verVerName(d1))+' → '+esc(verVerName(d2))+'</h3>'
-    + '<div class="cbar"><select id="vcsec" onchange="verCmpRender()"><option value="">全部</option>';
-  DIMS.forEach(function(d){ h += '<option value="'+d.id+'">'+esc(d.name)+'</option>'; });
-  h += '<option value="rt">停檢點路線圖</option><option value="meet">會議紀錄</option></select>'
-    + '<select id="vcty" onchange="verCmpRender()"><option value="">只看有變的格</option><option value="新增">只看新增</option><option value="修改">只看修改</option><option value="刪除">只看刪除</option></select>'
-    + '<span id="vccnt"></span></div><div id="vcbody"></div>'
-    + '<div class="obtns"><button data-act="vprint">列印／存 PDF</button><button data-act="ovlclose">關閉</button></div></div>';
-  ovlOpen(h);
-  document.getElementById("ovlbox").style.maxWidth = "1200px";
-  verCmpRender();
-}
-function verCmpRender(){
-  if (!verCmpPair) return;
-  var A, B;
-  try{ A = JSON.parse(vers[verCmpPair[0]].data); B = JSON.parse(vers[verCmpPair[1]].data); }
-  catch(e){ document.getElementById("vcbody").innerHTML = "版本資料損毀，無法比對"; return; }
-  var fs = (document.getElementById("vcsec")||{}).value || "";
-  var ft = (document.getElementById("vcty")||{}).value || "";
-  var all = verDiff(A, B);
-  var cnt = {"修改":0,"新增":0,"刪除":0};
-  var list = all.filter(function(r){ return (!fs || r.sec===fs); });
-  list.forEach(function(r){ cnt[r.type]++; });
-  if (ft) list = list.filter(function(r){ return r.type===ft; });
-  document.getElementById("vccnt").textContent = "修改 "+cnt["修改"]+"　新增 "+cnt["新增"]+"　刪除 "+cnt["刪除"];
-  var order = DIMS.map(function(d){ return d.id; }).concat(["rt","meet"]);
-  list.sort(function(a,b){
-    var x = order.indexOf(a.sec), y = order.indexOf(b.sec);
-    if (x!==y) return x-y;
-    return a.label < b.label ? -1 : (a.label > b.label ? 1 : 0);
-  });
-  var h = '<table><colgroup><col style="width:22%"><col style="width:39%"><col style="width:39%"></colgroup>'
-    + '<tr><th>格子</th><th>'+esc(verVerName(verCmpPair[0]))+'　舊</th><th>'+esc(verVerName(verCmpPair[1]))+'　新</th></tr>';
-  var last = null;
-  if (!list.length) h += '<tr><td colspan="3" class="vnone">兩版沒有差異</td></tr>';
-  list.forEach(function(r){
-    if (r.sec !== last){ h += '<tr class="sech"><td colspan="3">'+esc(verSecName(r.sec))+'</td></tr>'; last = r.sec; }
-    h += '<tr><td><span class="vty">'+r.type+'</span>'+esc(r.label)+'</td>'
-      + '<td>'+(r.old ? '<span class="vold">'+esc(r.old)+'</span>' : '<span class="vnone">（無）</span>')+'</td>'
-      + '<td>'+(r.nw ? '<span class="vnew">'+esc(r.nw)+'</span>' : '<span class="vnone">（刪除）</span>')+'</td></tr>';
-  });
-  h += '</table>';
-  document.getElementById("vcbody").innerHTML = h;
-}
-window.verCmpRender = verCmpRender;
-window.addEventListener("afterprint", function(){ document.body.classList.remove("prcmp"); });
-
 /* ---------- 停檢點路線圖（K1120-01） ---------- */
 .rt-wrap{background:var(--card);border:1.5px solid #666;padding:10px 14px 12px;margin-bottom:10px;line-height:1.5;}
 .rt-ttl{font-size:15px;font-weight:bold;color:#1B417D;margin-bottom:8px;line-height:1.6;}
@@ -1119,6 +923,203 @@ var hxOpen = false;      // 各構面「黃總流程軸對照」灰區展開狀�
 var ovOpen = false;
 var ovMode = "new";
 var snapDone = false;
+
+/* ---------- 版本紀錄（K1120-06） ---------- */
+/* 存在獨立集合 kaoji_ver（不進主集合即時監聽，避免每次開頁下載全部版本）；文件 id＝YYYYMMDD，同日覆寫成當天最新內容 */
+var VCOL = "kaoji_ver";
+var vers = {};
+var verLoaded = false, verLoadStarted = false, verTimer = null;
+var verSel = [];
+var verCmpPair = null;
+function verPayload(){
+  return JSON.stringify({cells:cells, rows:rows, meets:meets, rowmods:rowmods, grpmods:grpmods, fixes:fixes,
+    rtnets:rtnets, rtlines:rtlines, rtstns:rtstns, rtxs:rtxs});
+}
+function verLoad(){
+  if (!db) return;
+  verLoadStarted = true;
+  db.collection(VCOL).get().then(function(qs){
+    qs.forEach(function(doc){ var d = doc.data(); if (d && d.t==="ver" && d.date) vers[d.date] = d; });
+    Object.keys(snaps).forEach(function(ds){
+      var sp = snaps[ds];
+      if (!vers[ds] && sp && sp.data){
+        var v = {t:"ver", date:ds, ts:sp.ts||Date.now(), by:"每日快照", data:sp.data};
+        vers[ds] = v;
+        db.collection(VCOL).doc(ds).set(v).catch(function(){});
+      }
+    });
+    verFixCounts();
+    verLoaded = true;
+    renderBk();
+    verSave();
+  }).catch(function(){ verLoaded = true; renderBk(); });
+}
+function verPrev(ds){
+  var ks = Object.keys(vers).filter(function(k){ return k < ds; }).sort();
+  return ks.length ? vers[ks[ks.length-1]] : null;
+}
+function verFixCounts(){
+  Object.keys(vers).sort().forEach(function(ds){
+    var v = vers[ds];
+    if (typeof v.n === "number") return;
+    var pv = verPrev(ds);
+    try{ v.n = pv ? verDiff(JSON.parse(pv.data), JSON.parse(v.data)).length : 0; }catch(e){ v.n = 0; }
+    db.collection(VCOL).doc(ds).set(v).catch(function(){});
+  });
+}
+function verSchedule(){
+  if (!verLoaded) return;
+  if (verTimer) clearTimeout(verTimer);
+  verTimer = setTimeout(function(){ verTimer = null; verSave(); }, 15000);
+}
+function verSave(){
+  if (!db || !verLoaded || !connected) return;
+  var ds = tpDay(), p;
+  try{ p = verPayload(); }catch(e){ return; }
+  var pv = verPrev(ds);
+  if (vers[ds] && vers[ds].data === p) return;
+  if (!vers[ds] && pv && pv.data === p) return;
+  var n = 0;
+  try{ n = pv ? verDiff(JSON.parse(pv.data), JSON.parse(p)).length : 0; }catch(e){}
+  var v = {t:"ver", date:ds, ts:Date.now(), by:who()||"", data:p, n:n};
+  vers[ds] = v;
+  db.collection(VCOL).doc(ds).set(v).then(function(){ renderBk(); }).catch(function(){});
+  renderBk();
+}
+function wkName(ds){
+  if (!ds || ds.length!==8) return "";
+  var d = new Date(Date.UTC(+ds.slice(0,4), +ds.slice(4,6)-1, +ds.slice(6,8)));
+  return "日一二三四五六".charAt(d.getUTCDay());
+}
+function meetDay(md){
+  var m = String(md||"").match(/^(\d{2,3})[-\/.](\d{1,2})[-\/.](\d{1,2})/);
+  if (!m) return "";
+  return String(+m[1]+1911) + ("0"+m[2]).slice(-2) + ("0"+m[3]).slice(-2);
+}
+function meetOfDay(ds){
+  var out = [];
+  MEET_FIX.forEach(function(m){ if (meetDay(m.date)===ds) out.push(m.title); });
+  Object.keys(meets).forEach(function(k){ var m = meets[k]; if (m && !m.hidden && meetDay(m.date)===ds && out.indexOf(m.title)<0) out.push(m.title); });
+  return out.join("、");
+}
+function vLines(a){ return (a||[]).join("\n"); }
+function verView(o){
+  var v = {};
+  var ck = {};
+  Object.keys(SEED).forEach(function(k){ ck[k]=1; });
+  Object.keys(o.cells||{}).forEach(function(k){ ck[k]=1; });
+  Object.keys(ck).forEach(function(k){
+    var c = (o.cells||{})[k];
+    var lines = (c && c.lines) ? c.lines : (SEED[k] || []);
+    var lab; try{ lab = cName(k); }catch(e){ lab = k; }
+    v["c|"+k] = {sec:k.split("_")[0], label:lab, txt:vLines(lines)};
+  });
+  Object.keys(o.rows||{}).forEach(function(dim){
+    (o.rows[dim]||[]).forEach(function(r){ if (!r.hidden) v["r|"+dim+"_"+r.id] = {sec:dim, label:"自訂列 "+r.id, txt:r.name||""}; });
+  });
+  Object.keys(o.rowmods||{}).forEach(function(k){
+    var m = o.rowmods[k]; if (!m) return;
+    v["rm|"+k] = {sec:m.dim, label:"列設定 "+m.row, txt:(m.name?("名稱："+m.name):"")+(m.hidden?"\n（隱藏）":"")};
+  });
+  Object.keys(o.fixes||{}).forEach(function(k){
+    var f = o.fixes[k]; if (!f || !f.on) return;
+    var lab; try{ lab = rowName(f.dim, f.row); }catch(e){ lab = f.row; }
+    v["fx|"+k] = {sec:f.dim, label:"待修正 "+lab, txt:f.why||"待修正"};
+  });
+  Object.keys(o.meets||{}).forEach(function(k){
+    var m = o.meets[k]; if (!m || m.hidden) return;
+    v["mt|"+k] = {sec:"meet", label:(m.date||"")+" "+(m.title||""), txt:vLines(m.lines)};
+  });
+  var S = rtMerge(RT_SEED.stns, o.rtstns||{});
+  Object.keys(S).forEach(function(sid){
+    var s = S[sid]; if (!s || s.hidden) return;
+    var base = (s.code||"")+" "+(s.name||"");
+    v["sn|"+sid] = {sec:"rt", label:base+" / 站名", txt:base};
+    RT_FKEYS.forEach(function(fk){
+      v["sf|"+sid+"|"+fk[0]] = {sec:"rt", label:base+" / "+fk[1], txt:String((s.f&&s.f[fk[0]])||"")};
+    });
+    v["ss|"+sid] = {sec:"rt", label:base+" / 狀態", txt:(s.st==="done"?"已定案":"討論中")};
+  });
+  var X = rtMerge(RT_SEED.xs, o.rtxs||{});
+  Object.keys(X).forEach(function(xid){
+    var x = X[xid]; if (!x || x.hidden) return;
+    var fs = S[x.from], ts = S[x.to];
+    v["x|"+xid] = {sec:"rt", label:"轉乘 "+(x.code||xid),
+      txt:(fs?fs.code:"")+" → "+(ts?ts.code:"")+(x.note?("\n"+x.note):"")};
+  });
+  return v;
+}
+function verDiff(A, B){
+  var va = verView(A), vb = verView(B), out = [];
+  var keys = {};
+  Object.keys(va).forEach(function(k){ keys[k]=1; });
+  Object.keys(vb).forEach(function(k){ keys[k]=1; });
+  Object.keys(keys).forEach(function(k){
+    var a = va[k], b = vb[k];
+    var at = a ? a.txt : "", bt = b ? b.txt : "";
+    if (at === bt) return;
+    var ty = !at ? "新增" : (!bt ? "刪除" : "修改");
+    var x = b || a;
+    out.push({key:k, sec:x.sec, label:x.label, type:ty, old:at, nw:bt});
+  });
+  return out;
+}
+function verSecName(id){
+  if (id==="rt") return "停檢點路線圖";
+  if (id==="meet") return "會議紀錄";
+  for (var i=0;i<DIMS.length;i++) if (DIMS[i].id===id) return DIMS[i].name;
+  return id;
+}
+function verVerName(ds){ var mt = meetOfDay(ds); return dayLabel(ds).slice(5).replace("-","/") + (mt ? " "+mt : ""); }
+function verCompare(d1, d2){
+  if (d1 > d2){ var t = d1; d1 = d2; d2 = t; }
+  verCmpPair = [d1, d2];
+  var h = '<div class="cmpw"><h3>比對：'+esc(verVerName(d1))+' → '+esc(verVerName(d2))+'</h3>'
+    + '<div class="cbar"><select id="vcsec" onchange="verCmpRender()"><option value="">全部</option>';
+  DIMS.forEach(function(d){ h += '<option value="'+d.id+'">'+esc(d.name)+'</option>'; });
+  h += '<option value="rt">停檢點路線圖</option><option value="meet">會議紀錄</option></select>'
+    + '<select id="vcty" onchange="verCmpRender()"><option value="">只看有變的格</option><option value="新增">只看新增</option><option value="修改">只看修改</option><option value="刪除">只看刪除</option></select>'
+    + '<span id="vccnt"></span></div><div id="vcbody"></div>'
+    + '<div class="obtns"><button data-act="vprint">列印／存 PDF</button><button data-act="ovlclose">關閉</button></div></div>';
+  ovlOpen(h);
+  document.getElementById("ovlbox").style.maxWidth = "1200px";
+  verCmpRender();
+}
+function verCmpRender(){
+  if (!verCmpPair) return;
+  var A, B;
+  try{ A = JSON.parse(vers[verCmpPair[0]].data); B = JSON.parse(vers[verCmpPair[1]].data); }
+  catch(e){ document.getElementById("vcbody").innerHTML = "版本資料損毀，無法比對"; return; }
+  var fs = (document.getElementById("vcsec")||{}).value || "";
+  var ft = (document.getElementById("vcty")||{}).value || "";
+  var all = verDiff(A, B);
+  var cnt = {"修改":0,"新增":0,"刪除":0};
+  var list = all.filter(function(r){ return (!fs || r.sec===fs); });
+  list.forEach(function(r){ cnt[r.type]++; });
+  if (ft) list = list.filter(function(r){ return r.type===ft; });
+  document.getElementById("vccnt").textContent = "修改 "+cnt["修改"]+"　新增 "+cnt["新增"]+"　刪除 "+cnt["刪除"];
+  var order = DIMS.map(function(d){ return d.id; }).concat(["rt","meet"]);
+  list.sort(function(a,b){
+    var x = order.indexOf(a.sec), y = order.indexOf(b.sec);
+    if (x!==y) return x-y;
+    return a.label < b.label ? -1 : (a.label > b.label ? 1 : 0);
+  });
+  var h = '<table><colgroup><col style="width:22%"><col style="width:39%"><col style="width:39%"></colgroup>'
+    + '<tr><th>格子</th><th>'+esc(verVerName(verCmpPair[0]))+'　舊</th><th>'+esc(verVerName(verCmpPair[1]))+'　新</th></tr>';
+  var last = null;
+  if (!list.length) h += '<tr><td colspan="3" class="vnone">兩版沒有差異</td></tr>';
+  list.forEach(function(r){
+    if (r.sec !== last){ h += '<tr class="sech"><td colspan="3">'+esc(verSecName(r.sec))+'</td></tr>'; last = r.sec; }
+    h += '<tr><td><span class="vty">'+r.type+'</span>'+esc(r.label)+'</td>'
+      + '<td>'+(r.old ? '<span class="vold">'+esc(r.old)+'</span>' : '<span class="vnone">（無）</span>')+'</td>'
+      + '<td>'+(r.nw ? '<span class="vnew">'+esc(r.nw)+'</span>' : '<span class="vnone">（刪除）</span>')+'</td></tr>';
+  });
+  h += '</table>';
+  document.getElementById("vcbody").innerHTML = h;
+}
+window.verCmpRender = verCmpRender;
+window.addEventListener("afterprint", function(){ document.body.classList.remove("prcmp"); });
+
 
 function now(){
   var d = new Date();
